@@ -740,7 +740,7 @@ export default function App() {
                       </h3>
                     </div>
                   )}
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200">
                     <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
                         <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded mb-2">Ítem {item.id}</span>
