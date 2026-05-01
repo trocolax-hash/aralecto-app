@@ -576,6 +576,166 @@ const SCORE_COLORS = {
   4: "bg-green-100 text-green-800 border-green-200"
 };
 
+// Novedad: Diccionario con las descripciones de la rúbrica completa (Limpio y formateado)
+const RUBRIC_DESCRIPTIONS = {
+  "1.a": {
+    1: "La descripción del centro es superficial o incompleta, sin contemplar la diversidad curricular ni los aspectos contextuales relevantes para el Plan de Lectura.",
+    2: "Ofrece una descripción general del centro con referencias limitadas a su diversidad curricular o contexto, sin profundizar ni vincular claramente esta información con el plan.",
+    3: "Describe adecuadamente el centro incluyendo varios de los elementos clave (características del alumnado, contexto o diversidad curricular), aunque con menor profundidad o sin relacionarlos completamente con el Plan de Lectura.",
+    4: "Describe de forma detallada y contextualizada el centro, incluyendo datos relevantes (alumnado, profesorado, entorno socioeconómico y cultural, lenguas vehiculares, diversidad lingüística, necesidades específicas de apoyo educativo y participación de familias y agentes externos), y relaciona estos elementos con el diseño del Plan de Lectura."
+  },
+  "1.b": {
+    1: "No se justifica adecuadamente la importancia del enfoque transversal de la lectura o se hace de forma muy superficial y descontextualizada.",
+    2: "Menciona de forma general la importancia de la lectura transversal, sin profundizar en su aplicación práctica ni en su impacto en el aprendizaje.",
+    3: "Explica la importancia del enfoque transversal de la lectura y su presencia en distintas áreas, aunque con menor desarrollo en la justificación o sin integrar todos los elementos (proyecto de centro, normativa, etc.).",
+    4: "Justifica de forma clara y fundamentada la importancia de la lectura como eje transversal del aprendizaje, destacando su integración en todas las áreas, su contribución al desarrollo de la competencia lectora y su relación con el aprendizaje integral del alumnado, el proyecto de centro y la normativa educativa."
+  },
+  "2.a": {
+    1: "No se diferencian adecuadamente los objetivos por plazos o no existe una planificación temporal clara para su desarrollo.",
+    2: "Incluye objetivos por plazos de forma general, con escasa concreción o sin un cronograma claro que estructure su desarrollo.",
+    3: "Presenta objetivos diferenciados por plazos con una organización temporal adecuada, aunque el cronograma es menos detallado o presenta alguna falta de concreción.",
+    4: "Define objetivos a corto, medio y largo plazo claramente diferenciados y coherentes, organizados en un cronograma estructurado, realista y completo, que permite visualizar la progresión del plan y su implementación en el tiempo."
+  },
+  "2.b": {
+    1: "No define objetivos claros para el alumnado o estos son irrelevantes o muy genéricos.",
+    2: "Presenta objetivos generales para el alumnado, poco específicos o limitados en su alcance.",
+    3: "Incluye objetivos adecuados para el alumnado, relacionados con la competencia lectora, aunque con menor concreción o sin detallar su evaluación.",
+    4: "Define objetivos específicos claros, medibles y relevantes para el alumnado, orientados al desarrollo de la competencia lectora (aprender a leer, leer para aprender, leer para disfrutar), adaptados a distintas áreas y niveles."
+  },
+  "2.c": {
+    1: "No se definen objetivos claros para el profesorado o son irrelevantes.",
+    2: "Incluye objetivos generales para el profesorado, poco específicos o sin enfoque claro en la práctica docente.",
+    3: "Define objetivos adecuados para el profesorado relacionados con la lectura, aunque con menor concreción o desarrollo.",
+    4: "Establece objetivos específicos claros y medibles para el profesorado, orientados a la integración de la lectura en las áreas, el uso de estrategias lectoras, la coordinación docente y la formación."
+  },
+  "2.d": {
+    1: "No contempla objetivos dirigidos a las familias o estos son muy superficiales.",
+    2: "Presenta objetivos generales sobre la participación de las familias, poco definidos o limitados.",
+    3: "Incluye objetivos adecuados para las familias, aunque con menor concreción o desarrollo.",
+    4: "Define objetivos claros y relevantes para implicar a las familias en el desarrollo del hábito lector y el acompañamiento del alumnado, incluyendo su participación en actividades y seguimiento."
+  },
+  "2.e": {
+    1: "No define objetivos claros a nivel de centro o estos son poco relevantes.",
+    2: "Presenta objetivos generales para el centro, poco específicos o parcialmente desarrollados.",
+    3: "Incluye objetivos adecuados a nivel de centro, aunque con menor concreción o desarrollo.",
+    4: "Define objetivos claros, medibles y coherentes a nivel de centro, orientados a la creación de un entorno lector, la organización de tiempos y espacios, la dinamización de la biblioteca y la integración transversal de la lectura."
+  },
+  "3.a": {
+    1: "No se realiza una evaluación inicial o esta es muy superficial, sin aportar información relevante para el Plan de Lectura.",
+    2: "Incluye una evaluación inicial básica, poco desarrollada o centrada en aspectos generales, sin un análisis claro de la situación lectora.",
+    3: "Presenta una evaluación inicial adecuada de la competencia lectora, con identificación general de fortalezas y debilidades, aunque con menor profundidad o variedad de instrumentos.",
+    4: "Realiza una evaluación inicial completa y fundamentada de la competencia lectora del alumnado, incluyendo análisis de fortalezas y debilidades, utilizando instrumentos variados y adecuados."
+  },
+  "3.b": {
+    1: "No se realiza un diagnóstico por áreas o este es muy limitado y poco relevante.",
+    2: "Incluye referencias generales al uso de la lectura en algunas áreas, sin un análisis sistemático ni conexión clara con las programaciones.",
+    3: "Presenta un diagnóstico por áreas adecuado, con información relevante sobre el uso de la lectura en distintas materias, aunque con menor profundidad o sistematicidad.",
+    4: "Desarrolla un diagnóstico detallado por áreas, analizando las prácticas lectoras en las distintas materias, los tipos de textos utilizados y la actitud del alumnado, con coherencia respecto a las programaciones didácticas."
+  },
+  "3.c": {
+    1: "No identifica necesidades claras o estas son irrelevantes o no están relacionadas con la competencia lectora.",
+    2: "Presenta algunas necesidades de forma general o poco desarrollada, sin una clara fundamentación en el análisis previo.",
+    3: "Identifica necesidades relevantes relacionadas con la competencia lectora, aunque con menor concreción o sin vincularlas completamente al diagnóstico.",
+    4: "Identifica de forma clara, coherente y fundamentada las necesidades del centro en relación con la competencia lectora (alumnado, profesorado, recursos, organización), derivadas del diagnóstico previo y orientadas a la mejora del plan."
+  },
+  "4-5.a": {
+    1: "No define actividades claras para el fomento del hábito lector y la comprensión, o estas son escasas, poco relevantes o descontextualizadas.",
+    2: "Presenta algunas actividades relacionadas con la lectura, pero de forma general, poco estructurada o con escasa relación con los objetivos del plan.",
+    3: "Incluye diversas actividades adecuadas para el fomento del hábito lector y la comprensión, con cierta variedad y coherencia con el plan, aunque con menor sistematicidad, concreción o integración metodológica.",
+    4: "Define un conjunto amplio, variado y coherente de actividades orientadas al fomento del hábito lector y la comprensión, integrando distintas dimensiones de la lectura (aprender a leer, leer para aprender, leer para disfrutar), con planificación sistemática, metodologías activas y alineación clara con los objetivos del Plan de Lectura."
+  },
+  "4-5.b": {
+    1: "No se evidencia la integración de la lectura en las distintas áreas ni la consideración de los géneros discursivos o funciones lectoras.",
+    2: "Menciona la integración de la lectura en las materias de forma general, sin concretar los géneros discursivos ni diferenciar claramente las funciones de la lectura.",
+    3: "Integra la lectura en distintas áreas y contempla los géneros discursivos, incluyendo alguna diferenciación funcional de la lectura, aunque sin un mapa estructurado o con menor sistematicidad.",
+    4: "Integra la lectura de forma sistemática en todas las áreas mediante un mapa de géneros discursivos claramente definido, que distingue y articula las funciones de la lectura (aprender a leer, leer para aprender y leer para disfrutar), orientando la práctica docente."
+  },
+  "4-5.c": {
+    1: "No se contempla la biblioteca escolar como parte relevante del Plan de Lectura o su uso es muy limitado.",
+    2: "Menciona la biblioteca escolar de forma general, con escasas propuestas de uso pedagógico o sin una integración clara en el plan.",
+    3: "Incluye la biblioteca escolar como elemento relevante del plan, con propuestas de uso educativo y dinamización, aunque con menor desarrollo, concreción o sistematicidad.",
+    4: "Integra la biblioteca escolar como eje pedagógico del Plan de Lectura, con una planificación clara de su uso como recurso didáctico, espacio de aprendizaje y dinamización lectora, incluyendo organización, actividades, gestión de fondos y participación de la comunidad educativa."
+  },
+  "4-5.d": {
+    1: "No incorpora metodologías para el desarrollo de la competencia o su planteamiento es irrelevante o desconectado del Plan de Lectura.",
+    2: "Menciona metodologías para el desarrollo de la competencia lectora de forma puntual o poco desarrolladas, sin una integración clara en el plan.",
+    3: "Incluye propuestas metodológicas para el desarrollo de la competencia lectora, adecuadas y coherentes, aunque con menor desarrollo o sistematicidad.",
+    4: "Integra de forma planificada y coherente metodologías para el desarrollo de la competencia lectora desde la formación docente y la participación del alumnado mediante su aplicación en diferentes áreas."
+  },
+  "6.a": {
+    1: "No se justifica la selección de lecturas o estas son poco adecuadas, poco variadas o desmotivadoras.",
+    2: "Presenta una selección de lecturas general, poco variada o parcialmente adecuada al alumnado.",
+    3: "Incluye lecturas adecuadas al alumnado, con cierta variedad de géneros y temáticas, aunque con menor diversidad o ajuste a los intereses.",
+    4: "Selecciona lecturas variadas, adecuadas a la edad, nivel y características del alumnado, incorporando diversidad de géneros, formatos y temáticas, con especial atención a la motivación e intereses del alumnado."
+  },
+  "6.b": {
+    1: "No contempla la diversidad del alumnado ni la existencia de posibles desigualdades en la comprensión lectora.",
+    2: "Menciona la atención a la diversidad de forma general, sin concretar medidas específicas ni considerar la brecha de género en la competencia lectora.",
+    3: "Tiene en cuenta la diversidad del alumnado y plantea algunas medidas para favorecer la equidad en la comprensión lectora, aunque sin un análisis profundo o sistemático de la brecha de género.",
+    4: "Incorpora de forma explícita una perspectiva inclusiva y de equidad, identificando y abordando las diferencias en la competencia lectora del alumnado (incluida la brecha de género), mediante la selección de lecturas y estrategias adaptadas a distintas necesidades, niveles y perfiles."
+  },
+  "7.a": {
+    1: "No se contempla la distribución del tiempo de lectura o esta es irrelevante.",
+    2: "Menciona la dedicación de tiempo a la lectura de forma general, sin concreción ni integración clara en las distintas materias.",
+    3: "Incluye una distribución del tiempo de lectura en varias áreas, pero con menor sistematicidad o sin garantizar su aplicación en todo el centro.",
+    4: "Establece una distribución sistemática, equilibrada y explícita del tiempo de lectura en todas las áreas, garantizando una dedicación regular y significativa integrada en la práctica docente."
+  },
+  "7.b": {
+    1: "No existe una temporalización definida de proyectos o actividades lectoras.",
+    2: "Presenta una planificación general de actividades sin una temporalización clara o sin coordinación entre áreas.",
+    3: "Incluye una temporalización adecuada de proyectos y actividades, con información relevante, aunque con menor nivel de detalle o coordinación.",
+    4: "Presenta una temporalización clara, detallada y coherente de proyectos y actividades lectoras, incluyendo secuenciación, calendario, responsables y coordinación entre áreas, favoreciendo el trabajo interdisciplinar."
+  },
+  "8.a": {
+    1: "No define un sistema de evaluación claro o este es incompleto e incoherente.",
+    2: "Presenta indicadores o instrumentos de forma general, poco desarrollados o sin clara relación con los objetivos del plan.",
+    3: "Incluye indicadores e instrumentos de evaluación adecuados, aunque con menor variedad, concreción o alineación completa con el plan.",
+    4: "Define un sistema de evaluación completo y coherente, con indicadores claros y relevantes y una variedad de instrumentos adecuados, alineados con los objetivos, las líneas de actuación y el desarrollo de la competencia lectora."
+  },
+  "8.b": {
+    1: "No contempla el seguimiento ni la autoevaluación del Plan de Lectura.",
+    2: "Presenta acciones de seguimiento o evaluación de forma puntual o poco estructurada, sin un uso claro para la mejora.",
+    3: "Incluye mecanismos de seguimiento y revisión del plan con participación de distintos agentes, aunque con menor sistematicidad o uso limitado de los resultados.",
+    4: "Establece un sistema claro y sistemático de seguimiento y autoevaluación del Plan de Lectura, definiendo momentos, agentes implicados y procedimientos, y utiliza los resultados para la mejora continua del plan."
+  },
+  "9.a": {
+    1: "No se identifican claramente los recursos humanos ni la coordinación del Plan de Lectura.",
+    2: "Menciona espacios y recursos humanos de forma general, sin definir claramente funciones o responsabilidades.",
+    3: "Identifica espacios y recursos humanos implicados y sus funciones de forma adecuada, aunque con menor concreción o sistematicidad.",
+    4: "Plantea espacios y organiza los recursos humanos implicados en el Plan de Lectura, incluyendo coordinación, funciones y responsabilidades, con una organización estructurada que garantiza su desarrollo y seguimiento."
+  },
+  "9.b": {
+    1: "No contempla la formación del profesorado en relación con la competencia lectora.",
+    2: "Menciona la formación del profesorado de forma general, sin una planificación clara ni relación directa con el plan.",
+    3: "Incluye propuestas de formación del profesorado relacionadas con la lectura, pero con menor planificación o concreción.",
+    4: "Incorpora un plan de formación continua del profesorado relacionado con la competencia lectora, metodologías y estrategias de enseñanza, alineado con las necesidades del centro y el Plan de Lectura."
+  },
+  "9.c": {
+    1: "No identifica los recursos materiales necesarios o estos son insuficientes.",
+    2: "Menciona recursos materiales de forma general, sin concreción ni organización clara.",
+    3: "Incluye recursos materiales adecuados y variados, aunque con menor planificación o sin detallar su uso.",
+    4: "Define y organiza adecuadamente los recursos materiales necesarios (didácticos, digitales, bibliográficos), asegurando su disponibilidad, diversidad y adecuación a las necesidades del alumnado y del Plan de Lectura."
+  },
+  "10.a": {
+    1: "No se definen mecanismos claros de comunicación interna.",
+    2: "Presenta mecanismos de comunicación de forma general o poco estructurada.",
+    3: "Incluye mecanismos adecuados de comunicación interna, aunque con menor sistematicidad o variedad.",
+    4: "Define mecanismos claros, variados y sistemáticos de comunicación interna del Plan de Lectura, asegurando la difusión, coordinación y seguimiento entre los distintos órganos y profesionales del centro."
+  },
+  "10.b": {
+    1: "No contempla mecanismos de comunicación externa ni participación de familias o entorno.",
+    2: "Presenta acciones de comunicación externa de forma puntual o poco estructurada, mostrando cierta aproximación de las familias.",
+    3: "Incluye mecanismos adecuados de comunicación externa, con participación de familias y entorno, aunque con menor desarrollo o sistematicidad.",
+    4: "Define estrategias claras, variadas y sistemáticas de comunicación y proyección externa del Plan de Lectura, favoreciendo la participación de las familias y la colaboración con el entorno social y cultural."
+  },
+  "11.a": {
+    1: "No incluye una reflexión final relevante ni evidencia compromiso de la comunidad educativa.",
+    2: "Presenta una reflexión general sobre la importancia de la lectura, sin evidencias claras de compromiso colectivo o implicación de los distintos agentes.",
+    3: "Incluye una reflexión adecuada sobre la importancia del Plan de Lectura y evidencia compromiso del profesorado, aunque con menor grado de formalización o participación de la comunidad educativa.",
+    4: "Presenta una reflexión final clara y coherente sobre la importancia de la lectura como eje transversal, incorporando un compromiso explícito y compartido de la comunidad educativa, evidenciado mediante la aprobación del claustro y la implicación de otros órganos (familias, AMPA, etc.)."
+  }
+};
+
 // Componente para desplegable múltiple (Checkboxes)
 const MultiSelectDropdown = ({ title, options = [], selected = [], onChange, colorClass }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -662,13 +822,33 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('evaluation');
   const [evaluations, setEvaluations] = useState({});
   
-  // Novedad: Estado para los datos generales del informe
+  // Estado para los datos generales del informe
   const [metaData, setMetaData] = useState({ centro: '', asesor: '', fecha: '' });
 
-  // ---> AQUÍ AÑADIMOS LA MAGIA DEL SCROLL <---
+  // --- NUEVA SEGURIDAD ---
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [error, setError] = useState(false);
+
+  const CLAVE_ACCESO = "Aralecto2026"; // <--- ESTA ES TU CONTRASEÑA
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (passwordInput === CLAVE_ACCESO) {
+      setIsAuthenticated(true);
+      setError(false);
+    } else {
+      setError(true);
+    }
+  };
+  // -----------------------
+
+  // Efecto para subir arriba al cambiar de pestaña (solo si estamos dentro)
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [activeTab]);
+    if (isAuthenticated) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [activeTab, isAuthenticated]);
 
   const updateMeta = (field, value) => {
     setMetaData(prev => ({ ...prev, [field]: value }));
@@ -698,6 +878,39 @@ export default function App() {
       window.print();
     }, 500);
   };
+
+  // Si no está autenticado, mostramos la pantalla de login
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-blue-900 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full border-t-8 border-blue-600">
+          <div className="text-center mb-8">
+            <img src="/banner.png" alt="Logo" className="h-16 mx-auto mb-4 object-contain" onError={(e) => e.target.style.display='none'} />
+            <h2 className="text-2xl font-bold text-gray-800">Acceso Restringido</h2>
+            <p className="text-gray-500 mt-2 text-sm">Introduce la clave de acceso para utilizar la herramienta ARALECTO</p>
+          </div>
+          
+          <form onSubmit={handleLogin} className="space-y-4">
+            <input 
+              type="password" 
+              placeholder="Contraseña"
+              className={`w-full p-3 border rounded-lg outline-none transition-all ${error ? 'border-red-500 ring-2 ring-red-100' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'}`}
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+            />
+            {error && <p className="text-red-500 text-xs font-bold">Contraseña incorrecta. Inténtalo de nuevo.</p>}
+            <button type="submit" className="w-full bg-blue-800 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors shadow-lg">
+              Entrar en la aplicación
+            </button>
+          </form>
+          
+          <p className="text-[10px] text-gray-400 mt-8 text-center leading-tight">
+            © 2026 ARALECTO y GRUPO HUM 1128 LECOEDU. <br/> Todos los derechos reservados.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
@@ -1008,7 +1221,15 @@ export default function App() {
                           )}
                           <tr className="hover:bg-gray-50 break-inside-avoid">
                             <td className="px-4 py-3 font-bold text-gray-700 align-top">{item.id}</td>
-                            <td className="px-4 py-3 font-medium text-gray-900 align-top">{item.title}</td>
+                            <td className="px-4 py-3 font-medium text-gray-900 align-top">
+                              <div className="mb-1">{item.title}</div>
+                              {/* Esta es la parte que lee el diccionario que acabas de pegar */}
+                              {score && RUBRIC_DESCRIPTIONS[item.id] && RUBRIC_DESCRIPTIONS[item.id][score] && (
+                                <div className="mt-2 text-xs text-blue-800 bg-blue-50 p-2 rounded border border-blue-100 font-normal">
+                                  <strong>Justificación de la valoración:</strong> {RUBRIC_DESCRIPTIONS[item.id][score]}
+                                </div>
+                              )}
+                            </td>
                             <td className="px-4 py-3 text-center align-top">
                               {score ? (
                                 <span className={`inline-block px-2 py-1 rounded text-xs font-bold border ${SCORE_COLORS[score]}`}>
@@ -1051,6 +1272,15 @@ export default function App() {
           </div>
         )}
       </main>
+
+      {/* PIE DE PÁGINA / CRÉDITOS */}
+      <footer className="max-w-6xl mx-auto px-4 py-8 mb-4 border-t border-gray-200">
+        <p className="text-center text-[10px] text-gray-400 italic leading-relaxed">
+          Aplicación web diseñada y desarrollada en el marco de actuación entre ARALECTO y GRUPO HUM 1128 LECOEDU por Raúl Parro Rodríguez y Manuel F. Romero Oliva. <br/>
+          <strong>© 2026 Todos los derechos reservados.</strong>
+        </p>
+      </footer>
+  
     </div>
   );
 }
