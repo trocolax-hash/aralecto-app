@@ -68,13 +68,9 @@ Fortalezas
 ☐ Se incluyen acciones para implicar a las familias en actividades del centro (talleres, lecturas compartidas, etc.).
 ☐ Se reconoce la importancia del entorno familiar en el desarrollo de la competencia lectora.
 Ítem 2.e Objetivos específicos referidos al centro escolar
-☐ No se contemplan tiempos o espacios específicos para la lectura.
-☐ La biblioteca escolar no se integra como elemento central del plan.
-☐ No se incluyen acciones de dinamización de la lectura a nivel de centro.
-☐ No se evidencia la integración de la lectura en todas las áreas.
-☐ La implicación de la comunidad educativa es limitada o poco definida.
-☐ No se prevé la evaluación o seguimiento del plan.
-☐ Falta coordinación organizativa para el desarrollo del plan.
+☐ Se justifica su contribución al desarrollo competencial del alumnado.
+☐ Existe coherencia con el proyecto educativo de centro y la normativa vigente.
+☐ Se promueve una visión compartida de la lectura por parte del profesorado.
 Mejoras
 Ítem 2.a. Establece las líneas generales de actuación de la competencia lectora
 ☐ No se diferencian claramente los objetivos según el plazo (corto, medio y largo).☐ Los objetivos aparecen desordenados o sin una secuencia temporal clara.☐ No se incluye un cronograma o este es poco claro.☐ La planificación temporal es poco realista o difícilmente aplicable.☐ No se aprecia una progresión lógica en el desarrollo del plan.☐ Los objetivos no están claramente vinculados con las actuaciones o la evaluación.☐ El cronograma no permite visualizar el seguimiento del plan.
@@ -95,9 +91,13 @@ Mejoras
 ☐ No se establecen vínculos entre el centro y el entorno familiar.
 ☐ No se reconoce el papel de las familias en el desarrollo de la competencia lectora.
 Ítem 2.e Objetivos específicos referidos al centro escolar
-☐ Se justifica su contribución al desarrollo competencial del alumnado.
-☐ Existe coherencia con el proyecto educativo de centro y la normativa vigente.
-☐ Se promueve una visión compartida de la lectura por parte del profesorado
+☐ No se contemplan tiempos o espacios específicos para la lectura.
+☐ La biblioteca escolar no se integra como elemento central del plan.
+☐ No se incluyen acciones de dinamización de la lectura a nivel de centro.
+☐ No se evidencia la integración de la lectura en todas las áreas.
+☐ La implicación de la comunidad educativa es limitada o poco definida.
+☐ No se prevé la evaluación o seguimiento del plan.
+☐ Falta coordinación organizativa para el desarrollo del plan.
 Orientaciones (asesoramiento)
 Ítem 2.a. Establece las líneas generales de actuación de la competencia lectora
 ☐ Organizar los objetivos diferenciando claramente corto, medio y largo plazo.☐ Elaborar un cronograma que recoja de forma visual la secuencia temporal del plan.☐ Asegurar la coherencia entre los objetivos de los distintos plazos.☐ Ajustar la planificación temporal a las posibilidades reales del centro.☐ Vincular los objetivos con las líneas de actuación y los instrumentos de evaluación.☐ Incorporar hitos o momentos clave que faciliten el seguimiento del plan.☐ Utilizar herramientas visuales (tablas, calendarios) para mejorar la claridad del cronograma.
@@ -371,16 +371,10 @@ Fortalezas
 ☐ Se favorece la coordinación entre los distintos agentes educativos.
 ☐ Se implica a diferentes miembros de la comunidad educativa.
 Ítem 9.b. Formación continua 
-☐ La biblioteca escolar se concibe como eje del Plan de Lectura.
-☐ Se utiliza como recurso pedagógico integrado en el currículo.
-☐ Se planifican actividades de dinamización lectora desde la biblioteca.
-☐ Se contempla la organización y gestión de la biblioteca (fondos, espacios, horarios).
-☐ Se promueve el acceso a distintos tipos de recursos (impresos, digitales, etc.).
-☐ Se favorece el uso de la biblioteca por parte de alumnado, profesorado y familias.
-☐ Se vincula la biblioteca con las actividades del plan y las áreas curriculares.
-☐ Se promueve la biblioteca como espacio de aprendizaje autónomo e investigación.
-☐ Se contempla la actualización y adecuación de los fondos a las necesidades del alumnado.
-☐ Se fomenta la colaboración con otras bibliotecas o agentes externos.
+☐ Se contempla la formación del profesorado en competencia lectora.
+☐ Se incluyen acciones formativas relacionadas con metodologías de lectura.
+☐ La formación está alineada con las necesidades del centro.
+☐ Se promueve la actualización pedagógica del profesorado.
 Ítem 9.c. Recursos materiales 
 ☐ Se incluyen materiales variados (libros, recursos digitales, etc.).
 ☐ Los recursos son adecuados al alumnado.
@@ -393,10 +387,10 @@ Mejoras
 ☐ Falta organización en los recursos humanos.
 ☐ La coordinación entre agentes es limitada.
 Ítem 9.b. Formación continua 
-☐ Se contempla la formación del profesorado en competencia lectora.
-☐ Se incluyen acciones formativas relacionadas con metodologías de lectura.
-☐ La formación está alineada con las necesidades del centro.
-☐ Se promueve la actualización pedagógica del profesorado.
+☐ No se contempla la formación del profesorado.
+☐ La formación es general o poco específica.
+☐ No está vinculada al Plan de Lectura.
+☐ No responde a las necesidades del centro.
 Ítem 9.c. Recursos materiales 
 ☐ No se identifican claramente los recursos materiales.
 ☐ Los materiales no se adaptan a las necesidades del alumnado.
@@ -670,6 +664,11 @@ export default function App() {
   
   // Novedad: Estado para los datos generales del informe
   const [metaData, setMetaData] = useState({ centro: '', asesor: '', fecha: '' });
+
+  // ---> AQUÍ AÑADIMOS LA MAGIA DEL SCROLL <---
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activeTab]);
 
   const updateMeta = (field, value) => {
     setMetaData(prev => ({ ...prev, [field]: value }));
