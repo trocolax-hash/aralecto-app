@@ -813,7 +813,8 @@ export default function App() {
                   {/* Aquí se eliminó el overflow-hidden para que los menús floten */}
                   <div className="bg-white rounded-lg shadow-sm border border-gray-200">
                     <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-t-lg">
-                      <div>
+                      {/* Aquí está la magia: forzamos flex-col y items-start para pegar todo a la izquierda en PC */}
+                      <div className="flex flex-col items-center text-center sm:items-start sm:text-left flex-1">
                         <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded mb-2">Ítem {item.id}</span>
                         <h3 className="text-lg font-semibold text-gray-800">{item.title}</h3>
                       </div>
