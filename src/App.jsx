@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid } from 'recharts';
-import { ClipboardList, BarChart2, Printer, ChevronDown, Check } from 'lucide-react';
+import { BarChart2, Printer, ChevronDown, Building, User, Calendar } from 'lucide-react';
 
 // --- BASE DE DATOS (Extraída de la Rúbrica ARALECTO) ---
 const rawText = `
@@ -585,6 +585,21 @@ const SCORE_COLORS = {
 // Componente para desplegable múltiple (Checkboxes)
 const MultiSelectDropdown = ({ title, options = [], selected = [], onChange, colorClass }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = React.useRef(null); // Novedad: Referencia para saber dónde hacemos clic
+
+  // Novedad: Función para cerrar si se hace clic fuera
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    // Escucha cada clic que ocurre en el documento
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const toggleOption = (option) => {
     if (selected.includes(option)) {
@@ -595,7 +610,7 @@ const MultiSelectDropdown = ({ title, options = [], selected = [], onChange, col
   };
 
   return (
-    <div className="relative mb-2">
+    <div className="relative mb-2" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`w-full flex justify-between items-center px-4 py-2 text-sm border rounded-md shadow-sm bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500`}
@@ -603,7 +618,11 @@ const MultiSelectDropdown = ({ title, options = [], selected = [], onChange, col
         <span className="truncate flex-1 text-left">
           {selected.length === 0 ? `Seleccionar ${title}...` : `${selected.length} seleccionados`}
         </span>
-        <ChevronDown size={16} className="text-gray-400" />
+        {/* Novedad: Flecha que rota 180 grados si está abierto, con una transición suave */}
+        <ChevronDown 
+          size={16} 
+          className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
+        />
       </button>
 
       {isOpen && (
@@ -648,6 +667,13 @@ const MultiSelectDropdown = ({ title, options = [], selected = [], onChange, col
 export default function App() {
   const [activeTab, setActiveTab] = useState('evaluation');
   const [evaluations, setEvaluations] = useState({});
+  
+  // Novedad: Estado para los datos generales del informe
+  const [metaData, setMetaData] = useState({ centro: '', asesor: '', fecha: '' });
+
+  const updateMeta = (field, value) => {
+    setMetaData(prev => ({ ...prev, [field]: value }));
+  };
 
   const updateEval = (itemId, field, value) => {
     setEvaluations(prev => ({
@@ -686,23 +712,29 @@ export default function App() {
         }
       `}</style>
 
-      {/* Header */}
-      <header className="bg-blue-800 text-white shadow-md no-print">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
+      {/* Novedad: Header blanco para favorecer los logos con borde inferior azul */}
+      <header className="bg-white border-b-4 border-blue-800 shadow-md no-print sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center">
           <div className="flex items-center gap-3">
-            <ClipboardList size={28} />
-            <h1 className="text-xl font-bold text-white">Evaluación ARALECTO</h1>
+            {/* Si no has subido la imagen, no se romperá, simplemente no se mostrará */}
+            <img 
+              src="/banner.png" 
+              alt="Logos ARALECTO" 
+              className="h-14 sm:h-16 w-auto object-contain" 
+              onError={(e) => { e.target.style.display = 'none'; }} 
+            />
+            <h1 className="text-xl font-bold text-blue-900 ml-2">Evaluación ARALECTO</h1>
           </div>
           <div className="flex gap-2 mt-4 sm:mt-0">
             <button 
               onClick={() => setActiveTab('evaluation')}
-              className={`px-4 py-2 rounded-md font-medium transition-colors ${activeTab === 'evaluation' ? 'bg-white text-blue-800' : 'text-blue-100 hover:bg-blue-700'}`}
+              className={`px-4 py-2 rounded-md font-medium transition-colors ${activeTab === 'evaluation' ? 'bg-blue-800 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
             >
               Evaluación
             </button>
             <button 
               onClick={() => setActiveTab('dashboard')}
-              className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 ${activeTab === 'dashboard' ? 'bg-white text-blue-800' : 'text-blue-100 hover:bg-blue-700'}`}
+              className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 ${activeTab === 'dashboard' ? 'bg-blue-800 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
             >
               <BarChart2 size={18} /> Informe
             </button>
@@ -716,9 +748,47 @@ export default function App() {
         {/* EVALUATION TAB */}
         {activeTab === 'evaluation' && (
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Formulario de Rúbrica</h2>
-              <p className="text-gray-600">Evalúa cada ítem seleccionando la puntuación del 1 al 4 y marca las fortalezas, mejoras y orientaciones correspondientes en los desplegables.</p>
+            
+            {/* Novedad: Tarjeta de Datos Generales */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 border-l-4 border-l-blue-600">
+              <h2 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Datos Generales de la Evaluación</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <Building size={16} className="text-blue-600"/> Centro Evaluado
+                  </label>
+                  <input 
+                    type="text" 
+                    className="w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-2.5 outline-none transition-all" 
+                    placeholder="Ej: CEIP San Jorge" 
+                    value={metaData.centro} 
+                    onChange={(e) => updateMeta('centro', e.target.value)} 
+                  />
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <User size={16} className="text-blue-600"/> Asesor/a de referencia
+                  </label>
+                  <input 
+                    type="text" 
+                    className="w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-2.5 outline-none transition-all" 
+                    placeholder="Nombre completo" 
+                    value={metaData.asesor} 
+                    onChange={(e) => updateMeta('asesor', e.target.value)} 
+                  />
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <Calendar size={16} className="text-blue-600"/> Fecha de evaluación
+                  </label>
+                  <input 
+                    type="date" 
+                    className="w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-2.5 outline-none transition-all" 
+                    value={metaData.fecha} 
+                    onChange={(e) => updateMeta('fecha', e.target.value)} 
+                  />
+                </div>
+              </div>
             </div>
 
             {itemsList.map((item, index) => {
@@ -740,8 +810,9 @@ export default function App() {
                       </h3>
                     </div>
                   )}
+                  {/* Aquí se eliminó el overflow-hidden para que los menús floten */}
                   <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                    <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-t-lg">
                       <div>
                         <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded mb-2">Ítem {item.id}</span>
                         <h3 className="text-lg font-semibold text-gray-800">{item.title}</h3>
@@ -764,7 +835,7 @@ export default function App() {
                       </div>
                     </div>
                     
-                    <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 rounded-b-lg">
                       <div>
                         <h4 className="text-sm font-semibold text-green-700 mb-2 uppercase">Fortalezas</h4>
                         <MultiSelectDropdown 
@@ -806,7 +877,18 @@ export default function App() {
         {/* DASHBOARD TAB */}
         {activeTab === 'dashboard' && (
           <div className="space-y-8 print-full">
-            <div className="flex justify-between items-center border-b pb-4">
+            
+            {/* Novedad: Cabecera que SOLO aparece al imprimir */}
+            <div className="hidden print:block mb-8 text-center border-b-2 border-blue-800 pb-4">
+               <img 
+                  src="/banner.png" 
+                  alt="Logos ARALECTO" 
+                  className="w-full h-auto max-h-32 object-contain" 
+                  onError={(e) => { e.target.style.display = 'none'; }}
+               />
+            </div>
+
+            <div className="flex justify-between items-end border-b pb-4 print:hidden">
               <div>
                 <h2 className="text-3xl font-bold text-gray-800">Informe de Evaluación</h2>
                 <p className="text-gray-500 mt-1">Plan de Lectura - Programa ARALECTO</p>
@@ -817,6 +899,52 @@ export default function App() {
               >
                 <Printer size={18} /> Imprimir / PDF
               </button>
+            </div>
+
+            {/* Novedad: Recuadro con los datos generales en el informe */}
+            <div className="bg-blue-50 p-5 rounded-lg border border-blue-100 mb-6 grid grid-cols-1 sm:grid-cols-[2fr_2fr_1fr] print:grid-cols-[2fr_2fr_1fr] gap-6 break-inside-avoid">
+               <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-200 rounded-full text-blue-800 shrink-0"><Building size={20} /></div>
+                  <div className="min-w-0">
+                    <p className="text-xs text-blue-600 font-bold uppercase tracking-wider">Centro Evaluado</p>
+                    <p className="text-lg font-bold text-gray-900 truncate" title={metaData.centro}>{metaData.centro || <span className="text-gray-400 italic font-normal">Sin especificar</span>}</p>
+                  </div>
+               </div>
+               <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-200 rounded-full text-blue-800 shrink-0"><User size={20} /></div>
+                  <div className="min-w-0">
+                    <p className="text-xs text-blue-600 font-bold uppercase tracking-wider">Asesor/a</p>
+                    <p className="text-lg font-bold text-gray-900 truncate" title={metaData.asesor}>{metaData.asesor || <span className="text-gray-400 italic font-normal">Sin especificar</span>}</p>
+                  </div>
+               </div>
+               <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-200 rounded-full text-blue-800 shrink-0"><Calendar size={20} /></div>
+                  <div className="min-w-0">
+                    <p className="text-xs text-blue-600 font-bold uppercase tracking-wider">Fecha</p>
+                    <p className="text-lg font-bold text-gray-900 truncate">
+                      {metaData.fecha ? new Date(metaData.fecha).toLocaleDateString('es-ES') : <span className="text-gray-400 italic font-normal">Sin especificar</span>}
+                    </p>
+                  </div>
+               </div>
+            </div>
+
+            {/* Novedad: Texto introductorio del programa ARALECTO con Título */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8 break-inside-avoid">
+              {/* Aquí añadimos el nuevo título con el estilo azul de las etiquetas */}
+              <h3 className="text-lg text-blue-600 font-bold uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
+                INFORME DE EVALUACIÓN Y ASESORAMIENTO DE PLAN DE LECTURA
+              </h3>
+              <div className="text-gray-700 text-sm leading-relaxed text-justify space-y-4">
+                <p>
+                  El objetivo fundamental del primer año del programa de ARALECTO es facilitar a los centros participantes los instrumentos necesarios, tanto formativos como de acompañamiento especializado, para el diseño de un plan de lectura adaptado a sus necesidades. Este proceso incluye no solo la elaboración del plan, sino también su evaluación continua y el asesoramiento pedagógico para garantizar su eficacia.
+                </p>
+                <p>
+                  En esta fase inicial, el centro desarrollará un plan de lectura estructurado que establezca metas claras a corto y medio plazo en relación con la mejora de la competencia lectora del alumnado. Dicho plan será un documento consensuado que recogerá los acuerdos del centro en torno al fomento de la lectura (objetivos, estrategias metodológicas, propuestas didácticas, criterios de evaluación y seguimiento), integrando todas las etapas educativas y áreas curriculares.
+                </p>
+                <p>
+                  A partir de este diseño, y con el apoyo del equipo de asesoramiento de ARALECTO, los centros estarán en disposición de implementar y ajustar sus prácticas educativas, promoviendo el desarrollo de hábitos lectores y competencias de comprensión desde un enfoque transversal. Este proceso incluye la evaluación sistemática del impacto del plan y la toma de decisiones informadas para su mejora continua, asegurando así una intervención coherente, sostenible y contextualizada.
+                </p>
+              </div>
             </div>
 
             {/* CHART */}
