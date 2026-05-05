@@ -1274,7 +1274,7 @@ export default function App() {
       </main>
 
       {/* PIE DE PÁGINA / CRÉDITOS */}
-      <footer className="max-w-6xl mx-auto px-4 py-8 mb-4 border-t border-gray-200">
+      <footer className="max-w-6xl mx-auto px-4 py-8 mb-4 border-t border-gray-200 no-print">
         <p className="text-center text-[10px] text-gray-400 italic leading-relaxed">
           Aplicación web diseñada y desarrollada en el marco de actuación entre ARALECTO y GRUPO HUM 1128 LECOEDU por Raúl Parro Rodríguez y Manuel F. Romero Oliva. <br/>
           <strong>© 2026 Todos los derechos reservados.</strong>
