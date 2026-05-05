@@ -1219,13 +1219,13 @@ export default function App() {
                               </td>
                             </tr>
                           )}
-                          <tr className="hover:bg-gray-50 break-inside-avoid">
+                          <tr className="hover:bg-gray-50">
                             <td className="px-4 py-3 font-bold text-gray-700 align-top">{item.id}</td>
                             <td className="px-4 py-3 font-medium text-gray-900 align-top">
                               <div className="mb-1">{item.title}</div>
                               {/* Esta es la parte que lee el diccionario que acabas de pegar */}
                               {score && RUBRIC_DESCRIPTIONS[item.id] && RUBRIC_DESCRIPTIONS[item.id][score] && (
-                                <div className="mt-2 text-xs text-blue-800 bg-blue-50 p-2 rounded border border-blue-100 font-normal">
+                                <div className="mt-2 text-xs text-blue-800 bg-blue-50 p-2 rounded border border-blue-100 font-normal break-inside-avoid">
                                   <strong>Justificación de la valoración:</strong> {RUBRIC_DESCRIPTIONS[item.id][score]}
                                 </div>
                               )}
@@ -1242,21 +1242,21 @@ export default function App() {
                             <td className="px-4 py-3 align-top text-gray-600">
                               {ev?.fortalezas?.length > 0 ? (
                                 <ul className="list-disc pl-4 space-y-1">
-                                  {ev.fortalezas.map((f, i) => <li key={i}>{f}</li>)}
+                                 {ev.fortalezas.map((f, i) => <li key={i} className="break-inside-avoid mb-1">{f}</li>)}
                                 </ul>
                               ) : '-'}
                             </td>
                             <td className="px-4 py-3 align-top text-gray-600">
                               {ev?.mejoras?.length > 0 ? (
                                 <ul className="list-disc pl-4 space-y-1">
-                                  {ev.mejoras.map((m, i) => <li key={i}>{m}</li>)}
+                                  {ev.mejoras.map((m, i) => <li key={i} className="break-inside-avoid mb-1">{m}</li>)}
                                 </ul>
                               ) : '-'}
                             </td>
                             <td className="px-4 py-3 align-top text-gray-600">
                               {ev?.orientaciones?.length > 0 ? (
                                 <ul className="list-disc pl-4 space-y-1">
-                                  {ev.orientaciones.map((o, i) => <li key={i}>{o}</li>)}
+                                  {ev.orientaciones.map((o, i) => <li key={i} className="break-inside-avoid mb-1">{o}</li>)}
                                 </ul>
                               ) : '-'}
                             </td>
