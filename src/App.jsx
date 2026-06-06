@@ -1,9 +1,11 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid } from 'recharts';
 import { BarChart2, Printer, ChevronDown, Building, User, Calendar } from 'lucide-react';
 
-// --- BASE DE DATOS (Extraída de la Rúbrica ARALECTO) ---
-const rawText = `
+// ==========================================
+// 1. BASE DE DATOS: PLAN DE LECTURA (AZUL)
+// ==========================================
+const rawTextLectura = `
 1. CONTEXTUALIZACIÓN
 Valoración
 Fortalezas
@@ -475,7 +477,7 @@ Orientaciones (asesoramiento)
 ☐ Implicar a la comunidad educativa en el compromiso con el plan (familias, AMPA, etc.).
 `;
 
-const itemsList = [
+const itemsListLectura = [
   { id: "1.a", title: "Describe el centro educativo y su diversidad curricular" },
   { id: "1.b", title: "Indica la importancia de un enfoque transversal para la lectura" },
   { id: "2.a", title: "Objetivos generales del plan de lectura" },
@@ -504,7 +506,7 @@ const itemsList = [
   { id: "11.a", title: "Reflexión final desde el compromiso colectivo" }
 ];
 
-const SECTION_TITLES = {
+const SECTION_TITLES_LECTURA = {
   "1": "1. CONTEXTUALIZACIÓN",
   "2": "2. OBJETIVOS",
   "3": "3. ANÁLISIS INICIAL: DIAGNÓSTICO",
@@ -517,67 +519,7 @@ const SECTION_TITLES = {
   "11": "11. CONCLUSIÓN"
 };
 
-// Parser interno para convertir el texto en objetos
-const parseData = () => {
-  const sections = { Fortalezas: {}, Mejoras: {}, Orientaciones: {} };
-  let currentSection = null;
-  let currentItem = null;
-
-  const lines = rawText.split('\n');
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
-    const lowerLine = trimmed.toLowerCase();
-
-    if (lowerLine.includes("fortalezas") && lowerLine.length < 20) {
-      currentSection = "Fortalezas"; continue;
-    } else if ((lowerLine.includes("mejoras") || lowerLine.includes("aspectos de mejora")) && lowerLine.length < 30) {
-      currentSection = "Mejoras"; continue;
-    } else if (lowerLine.includes("orientaciones") && lowerLine.length < 40) {
-      currentSection = "Orientaciones"; continue;
-    }
-
-    const match = trimmed.match(/Ítem\s*([\d\-]+\.[a-z])/);
-    if (match) {
-      currentItem = match[1];
-      if (!sections.Fortalezas[currentItem]) {
-        sections.Fortalezas[currentItem] = [];
-        sections.Mejoras[currentItem] = [];
-        sections.Orientaciones[currentItem] = [];
-      }
-      continue;
-    }
-
-    if (trimmed.startsWith("☐")) {
-      const parts = trimmed.split("☐").map(p => p.trim()).filter(p => p);
-      for (const part of parts) {
-        if (currentSection && currentItem && sections[currentSection][currentItem]) {
-          sections[currentSection][currentItem].push(part);
-        }
-      }
-    }
-  }
-  return sections;
-};
-
-const rubricData = parseData();
-
-const SCORE_LABELS = {
-  1: "Mejorable",
-  2: "Aceptable",
-  3: "Bueno",
-  4: "Excelente"
-};
-
-const SCORE_COLORS = {
-  1: "bg-red-100 text-red-800 border-red-200",
-  2: "bg-orange-100 text-orange-800 border-orange-200",
-  3: "bg-yellow-100 text-yellow-800 border-yellow-200",
-  4: "bg-green-100 text-green-800 border-green-200"
-};
-
-// Novedad: Diccionario con las descripciones de la rúbrica completa (Limpio y formateado)
-const RUBRIC_DESCRIPTIONS = {
+const RUBRIC_DESCRIPTIONS_LECTURA = {
   "1.a": {
     1: "La descripción del centro es superficial o incompleta, sin contemplar la diversidad curricular ni los aspectos contextuales relevantes para el Plan de Lectura.",
     2: "Ofrece una descripción general del centro con referencias limitadas a su diversidad curricular o contexto, sin profundizar ni vincular claramente esta información con el plan.",
@@ -628,7 +570,7 @@ const RUBRIC_DESCRIPTIONS = {
   },
   "3.b": {
     1: "No se realiza un diagnóstico por áreas o este es muy limitado y poco relevante.",
-    2: "Incluye referencias generales al uso de la lectura en algunas áreas, sin un análisis sistemático ni conexión clara con las programaciones.",
+    2: "Incluye referencias generales al uso de la lectura en algunas áreas, sin un análisis systematic ni conexión clara con las programaciones.",
     3: "Presenta un diagnóstico por áreas adecuado, con información relevante sobre el uso de la lectura en distintas materias, aunque con menor profundidad o sistematicidad.",
     4: "Desarrolla un diagnóstico detallado por áreas, analizando las prácticas lectoras en las distintas materias, los tipos de textos utilizados y la actitud del alumnado, con coherencia respecto a las programaciones didácticas."
   },
@@ -736,19 +678,395 @@ const RUBRIC_DESCRIPTIONS = {
   }
 };
 
+
+// ==========================================
+// 2. BASE DE DATOS: PLAN DE REFUERZO (VERDE ESMERALDA)
+// ==========================================
+const rawTextRefuerzo = `
+Fortalezas
+Ítem 1.1
+☐ El diagnóstico se apoya en evidencias objetivas y permite identificar necesidades concretas.
+☐ La selección del alumnado destinatario está claramente justificada.
+Ítem 1.2
+☐ El diagnóstico se apoya en evidencias objetivas y permite identificar necesidades concretas.
+☐ La selección del alumnado destinatario está claramente justificada.
+Mejoras
+Ítem 1.1
+☐ Profundizar en el análisis de las necesidades lectoras mediante indicadores más precisos.
+☐ Concretar mejor los criterios de selección y seguimiento del alumnado participante.
+Ítem 1.2
+☐ Profundizar en el análisis de las necesidades lectoras mediante indicadores más precisos.
+☐ Concretar mejor los criterios de selección y seguimiento del alumnado participante.
+
+Fortalezas
+Ítem 2.1
+☐ Las actuaciones desarrollan de forma sistemática la fluidez, la precisión y la comprensión lectora.
+☐ El plan incorpora estrategias metacognitivas para mejorar la comprensión.
+Ítem 2.2
+☐ Las actuaciones desarrollan de forma sistemática la fluidez, la precisión y la comprensión lectora.
+☐ El plan incorpora estrategias metacognitivas para mejorar la comprensión.
+Ítem 2.3
+☐ Las actuaciones desarrollan de forma sistemática la fluidez, la precisión y la comprensión lectora.
+☐ El plan incorpora estrategias metacognitivas para mejorar la comprensión.
+Mejoras
+Ítem 2.1
+☐ Incrementar la presencia de actividades vinculadas a la fluidez y precisión lectora.
+☐ Incorporar un mayor número de estrategias de comprensión y autorregulación.
+Ítem 2.2
+☐ Incrementar la presencia de actividades vinculadas a la fluidez y precisión lectora.
+☐ Incorporar un mayor número de estrategias de comprensión y autorregulación.
+Ítem 2.3
+☐ Incrementar la presencia de actividades vinculadas a la fluidez y precisión lectora.
+☐ Incorporar un mayor número de estrategias de comprensión y autorregulación.
+
+Fortalezas
+Ítem 3.1
+☐ La lectura se integra de forma transversal en distintas áreas o materias.
+☐ Las actividades favorecen el análisis, la reflexión y el pensamiento crítico.
+Ítem 3.2
+☐ La lectura se integra de forma transversal en distintas áreas o materias.
+☐ Las actividades favorecen el análisis, la reflexión y el pensamiento crítico.
+Ítem 3.3
+☐ La lectura se integra de forma transversal en distintas áreas o materias.
+☐ Las actividades favorecen el análisis, la reflexión y el pensamiento crítico.
+Mejoras
+Ítem 3.1
+☐ Incrementar el uso de textos propios de las distintas áreas curriculares.
+☐ Reforzar la lectura como herramienta para construir conocimiento.
+Ítem 3.2
+☐ Incrementar el uso de textos propios de las distintas áreas curriculares.
+☐ Reforzar la lectura como herramienta para construir conocimiento.
+Ítem 3.3
+☐ Incrementar el uso de textos propios de las distintas áreas curriculares.
+☐ Reforzar la lectura como herramienta para construir conocimiento.
+
+Fortalezas
+Ítem 4.1
+☐ El plan contempla actuaciones motivadoras para fomentar el hábito lector.
+☐ Existe diversidad de géneros, formatos y experiencias lectoras.
+Ítem 4.2
+☐ El plan contempla actuaciones motivadoras para fomentar el hábito lector.
+☐ Existe diversidad de géneros, formatos y experiencias lectoras.
+Ítem 4.3
+☐ El plan contempla actuaciones motivadoras para fomentar el hábito lector.
+☐ Existe diversidad de géneros, formatos y experiencias lectoras.
+Mejoras
+Ítem 4.1
+☐ Ampliar la variedad de propuestas de animación y mediación lectora.
+☐ Incrementar las oportunidades de lectura autónoma y compartida.
+Ítem 4.2
+☐ Ampliar la variedad de propuestas de animación y mediación lectora.
+☐ Incrementar las oportunidades de lectura autónoma y compartida.
+Ítem 4.3
+☐ Ampliar la variedad de propuestas de animación y mediación lectora.
+☐ Incrementar las oportunidades de lectura autónoma y compartida.
+
+Fortalezas
+Ítem 5.1
+☐ Existe una progresión coherente de los aprendizajes lectores entre cursos.
+☐ El centro presenta un itinerario lector coordinado y diversificado.
+Ítem 5.2
+☐ Existe una progresión coherente de los aprendizajes lectores entre cursos.
+☐ El centro presenta un itinerario lector coordinado y diversificado.
+Ítem 5.3
+☐ Existe una progresión coherente de los aprendizajes lectores entre cursos.
+☐ El centro presenta un itinerario lector coordinado y diversificado.
+Ítem 5.4
+☐ Existe una progresión coherente de los aprendizajes lectores entre cursos.
+☐ El centro presenta un itinerario lector coordinado y diversificado.
+Mejoras
+Ítem 5.1
+☐ Reforzar la coordinación vertical entre cursos o etapas.
+☐ Mejorar la coherencia entre objetivos, experiencias lectoras y progresión curricular.
+Ítem 5.2
+☐ Reforzar la coordinación vertical entre cursos o etapas.
+☐ Mejorar la coherencia entre objetivos, experiencias lectoras y progresión curricular.
+Ítem 5.3
+☐ Reforzar la coordinación vertical entre cursos o etapas.
+☐ Mejorar la coherencia entre objetivos, experiencias lectoras y progresión curricular.
+Ítem 5.4
+☐ Reforzar la coordinación vertical entre cursos o etapas.
+☐ Mejorar la coherencia entre objetivos, experiencias lectoras y progresión curricular.
+
+Fortalezas
+Ítem 6.1
+☐ La planificación temporal es adecuada y coherente con los objetivos planteados.
+☐ Los materiales y apoyos previstos favorecen la viabilidad de las actuaciones.
+Ítem 6.2
+☐ La planificación temporal es adecuada y coherente con los objetivos planteados.
+☐ Los materiales y apoyos previstos favorecen la viabilidad de las actuaciones.
+Ítem 6.3
+☐ La planificación temporal es adecuada y coherente con los objetivos planteados.
+☐ Los materiales y apoyos previstos favorecen la viabilidad de las actuaciones.
+Mejoras
+Ítem 6.1
+☐ Concretar mejor la organización temporal para alcanzar los objetivos previstos.
+☐ Ajustar la relación entre objetivos, actuaciones y recursos disponibles.
+Ítem 6.2
+☐ Concretar mejor la organización temporal para alcanzar los objetivos previstos.
+☐ Ajustar la relación entre objetivos, actuaciones y recursos disponibles.
+Ítem 6.3
+☐ Concretar mejor la organización temporal para alcanzar los objetivos previstos.
+☐ Ajustar la relación entre objetivos, actuaciones y recursos disponibles.
+
+Fortalezas
+Ítem 7.1
+☐ El plan incorpora indicadores claros para realizar el seguimiento de las actuaciones.
+☐ Los procedimientos se ajustan para valorar el impacto y orientar la mejora.
+Ítem 7.2
+☐ El plan incorpora indicadores claros para realizar el seguimiento de las actuaciones.
+☐ Los procedimientos se ajustan para valorar el impacto y orientar la mejora.
+Ítem 7.3
+☐ El plan incorpora indicadores claros para realizar el seguimiento de las actuaciones.
+☐ Los procedimientos se ajustan para valorar el impacto y orientar la mejora.
+Mejoras
+Ítem 7.1
+☐ Definir indicadores más específicos y medibles.
+☐ Concretar mecanismos para utilizar los resultados en la toma de decisiones futuras.
+Ítem 7.2
+☐ Definir indicadores más específicos y medibles.
+☐ Concretar mecanismos para utilizar los resultados en la toma de decisiones futuras.
+Ítem 7.3
+☐ Definir indicadores más específicos y medibles.
+☐ Concretar mecanismos para utilizar los resultados en la toma de decisiones futuras.
+`;
+
+const itemsListRefuerzo = [
+  { id: "1.1", title: "Identificación de necesidades lectoras" },
+  { id: "1.2", title: "Selección del alumnado destinatario" },
+  { id: "2.1", title: "Fluidez y precisión lectora" },
+  { id: "2.2", title: "Comprensión lectora" },
+  { id: "2.3", title: "Estrategias metacognitivas" },
+  { id: "3.1", title: "Lectura en las áreas" },
+  { id: "3.2", title: "Uso de textos disciplinares" },
+  { id: "3.3", title: "Desarrollo del pensamiento crítico" },
+  { id: "4.1", title: "Fomento del hábito lector" },
+  { id: "4.2", title: "Diversidad de lecturas" },
+  { id: "4.3", title: "Participación en experiencias lectoras" },
+  { id: "5.1", title: "Coherencia con el momento evolutivo del alumnado" },
+  { id: "5.2", title: "Progresión de aprendizajes lectores" },
+  { id: "5.3", title: "Coordinación vertical" },
+  { id: "5.4", title: "Diversificación de experiencias lectoras" },
+  { id: "6.1", title: "Tiempo de dedicación a la mejora de la comprensión lectora" },
+  { id: "6.2", title: "Materiales: organización de recursos y apoyos" },
+  { id: "6.3", title: "Cohesión entre objetivos, actuaciones y recursos" },
+  { id: "7.1", title: "Indicadores de seguimiento" },
+  { id: "7.2", title: "Evaluación del impacto" },
+  { id: "7.3", title: "Propuestas de mejora" }
+];
+
+const SECTION_TITLES_REFUERZO = {
+  "1": "DIMENSIÓN 1. JUSTIFICACIÓN Y DIAGNÓSTICO",
+  "2": "DIMENSIÓN 2. INCLUSIÓN DEL ENFOQUE: APRENDER A LEER",
+  "3": "DIMENSIÓN 3. INCLUSIÓN DEL ENFOQUE: LEER PARA APRENDER",
+  "4": "DIMENSIÓN 4. INCLUSIÓN DEL ENFOQUE: LEER PARA DISFRUTAR",
+  "5": "DIMENSIÓN 5. CONTEXTUALIZACIÓN, ITINERARIO LECTOR Y PROGRESIÓN",
+  "6": "DIMENSIÓN 6. IMPLEMENTACIÓN",
+  "7": "DIMENSIÓN 7. EVALUACIÓN Y MEJORA"
+};
+
+const RUBRIC_DESCRIPTIONS_REFUERZO = {
+  "1.1": {
+    4: "El análisis se fundamenta en datos objetivos y permite identificar fortalezas y necesidades concretas.",
+    3: "El análisis identifica necesidades relevantes apoyadas en algunas evidencias.",
+    2: "El análisis es genérico y poco vinculado a datos.",
+    1: "No existe diagnóstico o resulta insuficiente."
+  },
+  "1.2": {
+    4: "Los criterios están claramente definidos y justificados.",
+    3: "Los criterios son adecuados, aunque poco detallados.",
+    2: "Los criterios aparecen de forma parcial.",
+    1: "No se explicitan criterios."
+  },
+  "2.1": {
+    4: "Se trabajan de forma sistemática con seguimiento del progreso.",
+    3: "Se incluyen actuaciones específicas.",
+    2: "Se abordan ocasionalmente.",
+    1: "No aparecen actuaciones."
+  },
+  "2.2": {
+    4: "Se desarrollan procesos literales, inferenciales y críticos.",
+    3: "Se trabajan distintos niveles de comprensión.",
+    2: "Predomina la comprensión literal.",
+    1: "No se evidencian actuaciones."
+  },
+  "2.3": {
+    4: "Se enseñan y evalúan estrategias de comprensión.",
+    3: "Se incluyen algunas estrategias.",
+    2: "Su presencia es puntual.",
+    1: "No aparecen."
+  },
+  "3.1": {
+    4: "Todas o la mayoría de las áreas participan activamente.",
+    3: "Varias áreas incorporan actuaciones.",
+    2: "Participación limitada.",
+    1: "Solo interviene Lengua."
+  },
+  "3.2": {
+    4: "Existe trabajo sistemático con textos propios de las áreas.",
+    3: "Se utilizan textos variados.",
+    2: "Uso ocasional.",
+    1: "No se contemplan."
+  },
+  "3.3": {
+    4: "Las actividades promueven análisis, contraste y argumentación.",
+    3: "Existen propuestas relevantes.",
+    2: "Presencia limitada.",
+    1: "No se contempla."
+  },
+  "4.1": {
+    4: "Se desarrollan actuaciones continuadas y motivadoras.",
+    3: "Existen actuaciones periódicas.",
+    2: "Actuaciones puntuales.",
+    1: "No aparecen."
+  },
+  "4.2": {
+    4: "Amplia variedad de géneros, autores y formatos.",
+    3: "Diversidad suficiente.",
+    2: "Diversidad limitada.",
+    1: "Selección muy restringida."
+  },
+  "4.3": {
+    4: "Clubes, tertulias, encuentros, recomendaciones y proyectos lectores.",
+    3: "Varias experiencias lectoras.",
+    2: "Escasas experiencias.",
+    1: "No aparecen."
+  },
+  "5.1": {
+    4: "Objetivos, actividades y evaluación están cohesionados y adaptados a cada curso.",
+    3: "Existe adecuación general al nivel educativo, aunque la relación entre objetivos, estrategias y actividades podría resultar más coherente.",
+    2: "No hay cohesión entre los objetivos propuestos respecto a las estrategias y actividades.",
+    1: "No existe adaptación específica."
+  },
+  "5.2": {
+    4: "Existe una secuencia clara y acumulativa entre cursos.",
+    3: "Se aprecia progresión en la mayoría de las propuestas.",
+    2: "La progresión es poco evidente.",
+    1: "Las propuestas aparecen desconectadas."
+  },
+  "5.3": {
+    4: "Se evidencian acuerdos y continuidad metodológica entre cursos.",
+    3: "Existen algunos elementos comunes.",
+    2: "La coordinación es limitada.",
+    1: "No hay evidencias de coordinación."
+  },
+  "5.4": {
+    4: "El itinerario contempla variedad de géneros, formatos y finalidades.",
+    3: "Existe diversidad suficiente, pero debe reforzar las finalidades vinculadas a aprender a leer o leer para aprender.",
+    2: "La diversidad es reducida con tendencia a la lectura literaria.",
+    1: "Las experiencias son repetitivas."
+  },
+  "6.1": {
+    4: "El plan establece una dedicación temporal claramente definida, suficiente y coherente con los objetivos planteados.",
+    3: "El plan concreta tiempos de intervención y presenta una distribución temporal razonable, aunque algunos aspectos de la planificación podrían precisarse mejor.",
+    2: "La dedicación temporal aparece de forma parcial para la viabilidad de las actuaciones programadas.",
+    1: "La planificación temporal resulta insuficiente para alcanzar los objetivos previstos."
+  },
+  "6.2": {
+    4: "Los materiales, recursos y apoyos están claramente identificados, son variados, adecuados al nivel del alumnado y están alineados con los objetivos y actuaciones previstas.",
+    3: "La organización de apoyos es adecuada, aunque algunos aspectos podrían concretarse mejor.",
+    2: "Los recursos aparecen de forma genérica o incompleta. La organización de apoyos presenta escasa concreción o coherencia con las actuaciones previstas.",
+    1: "No se identifican claramente los materiales, recursos o apoyos necesarios para desarrollar las actuaciones propuestas."
+  },
+  "6.3": {
+    4: "Existe plena coherencia entre las necesidades detectadas, los objetivos, las actuaciones, el tiempo previsto y los recursos asignados.",
+    3: "La coherencia es adecuada en la mayoría de los elementos.",
+    2: "Se observan algunas discrepancias entre objetivos y actuaciones o entre actuaciones y recursos.",
+    1: "No existe una relación clara entre necesidades, objetivos, actuaciones y recursos."
+  },
+  "7.1": {
+    4: "Los indicadores son claros, medibles y relevantes.",
+    3: "Existen indicadores adecuados.",
+    2: "Indicadores poco definidos.",
+    1: "No existen indicadores."
+  },
+  "7.2": {
+    4: "Se prevén procedimientos para medir resultados.",
+    3: "Existe evaluación prevista.",
+    2: "Evaluación poco concreta.",
+    1: "No se contempla."
+  },
+  "7.3": {
+    4: "El plan incorpora mecanismos de revisión y mejora continua.",
+    3: "Se plantean mejoras futuras.",
+    2: "Las mejoras son genéricas.",
+    1: "No aparecen propuestas de mejora."
+  }
+};
+
+
+// ==========================================
+// 3. CONFIGURACIÓN COMPARTIDA Y FUNCIONES
+// ==========================================
+
+const SCORE_LABELS_LECTURA = { 1: "Mejorable", 2: "Aceptable", 3: "Bueno", 4: "Excelente" };
+const SCORE_LABELS_REFUERZO = { 1: "Inicial", 2: "En desarrollo", 3: "Adecuado", 4: "Excelente" };
+
+const SCORE_COLORS = {
+  1: "bg-red-100 text-red-800 border-red-200",
+  2: "bg-orange-100 text-orange-800 border-orange-200",
+  3: "bg-yellow-100 text-yellow-800 border-yellow-200",
+  4: "bg-green-100 text-green-800 border-green-200"
+};
+
+// Parser adaptado para procesar cualquier texto
+const parseData = (text) => {
+  const sections = { Fortalezas: {}, Mejoras: {}, Orientaciones: {} };
+  let currentSection = null;
+  let currentItem = null;
+
+  const lines = text.split('\n');
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    const lowerLine = trimmed.toLowerCase();
+
+    if (lowerLine.includes("fortalezas") && lowerLine.length < 20) {
+      currentSection = "Fortalezas"; continue;
+    } else if ((lowerLine.includes("mejoras") || lowerLine.includes("aspectos de mejora")) && lowerLine.length < 30) {
+      currentSection = "Mejoras"; continue;
+    } else if (lowerLine.includes("orientaciones") && lowerLine.length < 40) {
+      currentSection = "Orientaciones"; continue;
+    }
+
+    const match = trimmed.match(/Ítem\s*([\d\-]+\.[\w]+)/); // Acepta 1.a o 1.1
+    if (match) {
+      currentItem = match[1];
+      if (!sections.Fortalezas[currentItem]) {
+        sections.Fortalezas[currentItem] = [];
+        sections.Mejoras[currentItem] = [];
+        sections.Orientaciones[currentItem] = [];
+      }
+      continue;
+    }
+
+    if (trimmed.startsWith("☐")) {
+      const parts = trimmed.split("☐").map(p => p.trim()).filter(p => p);
+      for (const part of parts) {
+        if (currentSection && currentItem && sections[currentSection][currentItem]) {
+          sections[currentSection][currentItem].push(part);
+        }
+      }
+    }
+  }
+  return sections;
+};
+
+const rubricDataLectura = parseData(rawTextLectura);
+const rubricDataRefuerzo = parseData(rawTextRefuerzo);
+
+
 // Componente para desplegable múltiple (Checkboxes)
 const MultiSelectDropdown = ({ title, options = [], selected = [], onChange, colorClass }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = React.useRef(null); // Novedad: Referencia para saber dónde hacemos clic
+  const dropdownRef = React.useRef(null);
 
-  // Novedad: Función para cerrar si se hace clic fuera
   React.useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     };
-    // Escucha cada clic que ocurre en el documento
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -772,7 +1090,6 @@ const MultiSelectDropdown = ({ title, options = [], selected = [], onChange, col
         <span className="truncate flex-1 text-left">
           {selected.length === 0 ? `Seleccionar ${title}...` : `${selected.length} seleccionados`}
         </span>
-        {/* Novedad: Flecha que rota 180 grados si está abierto, con una transición suave */}
         <ChevronDown 
           size={16} 
           className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
@@ -803,7 +1120,6 @@ const MultiSelectDropdown = ({ title, options = [], selected = [], onChange, col
         </div>
       )}
       
-      {/* Selected tags display */}
       {selected.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1">
           {selected.map((s, i) => (
@@ -818,19 +1134,27 @@ const MultiSelectDropdown = ({ title, options = [], selected = [], onChange, col
   );
 };
 
+
+// ==========================================
+// 4. APLICACIÓN PRINCIPAL
+// ==========================================
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState('evaluation');
-  const [evaluations, setEvaluations] = useState({});
+  // Pestañas separadas
+  const [activeTab, setActiveTab] = useState('eval_lectura');
   
-  // Estado para los datos generales del informe
+  // Memorias independientes
+  const [evaluationsLectura, setEvaluationsLectura] = useState({});
+  const [evaluationsRefuerzo, setEvaluationsRefuerzo] = useState({});
+  
+  // Datos Generales
   const [metaData, setMetaData] = useState({ centro: '', asesor: '', fecha: '' });
 
-  // --- NUEVA SEGURIDAD ---
+  // --- SEGURIDAD ---
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
   const [error, setError] = useState(false);
-
-  const CLAVE_ACCESO = "Aralecto2026"; // <--- ESTA ES TU CONTRASEÑA
+  const CLAVE_ACCESO = "Aralecto2026"; 
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -843,7 +1167,6 @@ export default function App() {
   };
   // -----------------------
 
-  // Efecto para subir arriba al cambiar de pestaña (solo si estamos dentro)
   useEffect(() => {
     if (isAuthenticated) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -854,32 +1177,39 @@ export default function App() {
     setMetaData(prev => ({ ...prev, [field]: value }));
   };
 
-  const updateEval = (itemId, field, value) => {
-    setEvaluations(prev => ({
-      ...prev,
-      [itemId]: {
-        ...prev[itemId],
-        [field]: value
-      }
+  const updateEvalLectura = (itemId, field, value) => {
+    setEvaluationsLectura(prev => ({
+      ...prev, [itemId]: { ...prev[itemId], [field]: value }
     }));
   };
 
-  const getScoreDataForChart = () => {
-    return itemsList.map(item => ({
+  const updateEvalRefuerzo = (itemId, field, value) => {
+    setEvaluationsRefuerzo(prev => ({
+      ...prev, [itemId]: { ...prev[itemId], [field]: value }
+    }));
+  };
+
+  const getScoreDataForChartLectura = () => {
+    return itemsListLectura.map(item => ({
       name: item.id,
-      puntuacion: evaluations[item.id]?.score || 0,
+      puntuacion: evaluationsLectura[item.id]?.score || 0,
+      fullTitle: item.title
+    }));
+  };
+
+  const getScoreDataForChartRefuerzo = () => {
+    return itemsListRefuerzo.map(item => ({
+      name: item.id,
+      puntuacion: evaluationsRefuerzo[item.id]?.score || 0,
       fullTitle: item.title
     }));
   };
 
   const handlePrint = () => {
-    setActiveTab('dashboard'); // Force switch to dashboard before print
-    setTimeout(() => {
-      window.print();
-    }, 500);
+    window.print();
   };
 
-  // Si no está autenticado, mostramos la pantalla de login
+  // Pantalla de Login
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-blue-900 flex items-center justify-center p-4">
@@ -912,6 +1242,182 @@ export default function App() {
     );
   }
 
+  // --- FUNCIÓN PARA DIBUJAR LOS ÍTEMS DE EVALUACIÓN ---
+  const renderEvaluationItems = (itemsList, sectionTitles, rubricData, evaluations, updateEvalFn, themeColor) => {
+    const isEmerald = themeColor === 'emerald';
+    
+    return itemsList.map((item, index) => {
+      const sectionPrefix = item.id.split('.')[0];
+      const previousPrefix = index > 0 ? itemsList[index - 1].id.split('.')[0] : null;
+      const isNewSection = sectionPrefix !== previousPrefix;
+
+      const currentEval = evaluations[item.id] || { score: null, fortalezas: [], mejoras: [], orientaciones: [] };
+      const fOptions = rubricData.Fortalezas[item.id] || [];
+      const mOptions = rubricData.Mejoras[item.id] || [];
+      const oOptions = rubricData.Orientaciones[item.id] || [];
+
+      return (
+        <React.Fragment key={item.id}>
+          {isNewSection && (
+            <div className={`mt-8 mb-2 pb-2 border-b-2 ${isEmerald ? 'border-emerald-700' : 'border-blue-800'}`}>
+              <h3 className={`text-xl font-bold uppercase tracking-wide ${isEmerald ? 'text-emerald-800' : 'text-blue-900'}`}>
+                {sectionTitles[sectionPrefix]}
+              </h3>
+            </div>
+          )}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-t-lg">
+              <div className="flex flex-col items-center text-center sm:items-start sm:text-left flex-1">
+                <span className={`inline-block px-2 py-1 text-xs font-bold rounded mb-2 ${isEmerald ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}`}>
+                  Ítem {item.id}
+                </span>
+                <h3 className="text-lg font-semibold text-gray-800">{item.title}</h3>
+              </div>
+              
+              <div className="flex gap-2 shrink-0">
+                {[1, 2, 3, 4].map(num => (
+                  <button
+                    key={num}
+                    onClick={() => updateEvalFn(item.id, 'score', num)}
+                    className={`w-10 h-10 rounded-full font-bold transition-all border-2 
+                      ${currentEval.score === num 
+                        ? SCORE_COLORS[num] + ' ring-2 ring-offset-2 ring-gray-300' 
+                        : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'}`}
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 rounded-b-lg">
+              {fOptions.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-semibold text-green-700 mb-2 uppercase">Fortalezas</h4>
+                  <MultiSelectDropdown 
+                    title="Fortalezas" options={fOptions} selected={currentEval.fortalezas} 
+                    onChange={(vals) => updateEvalFn(item.id, 'fortalezas', vals)}
+                    colorClass="bg-green-100 text-green-800 border-green-200"
+                  />
+                </div>
+              )}
+              {mOptions.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-semibold text-orange-700 mb-2 uppercase">Áreas de Mejora</h4>
+                  <MultiSelectDropdown 
+                    title="Mejoras" options={mOptions} selected={currentEval.mejoras} 
+                    onChange={(vals) => updateEvalFn(item.id, 'mejoras', vals)}
+                    colorClass="bg-orange-100 text-orange-800 border-orange-200"
+                  />
+                </div>
+              )}
+              {oOptions.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-semibold text-blue-700 mb-2 uppercase">Orientaciones</h4>
+                  <MultiSelectDropdown 
+                    title="Orientaciones" options={oOptions} selected={currentEval.orientaciones} 
+                    onChange={(vals) => updateEvalFn(item.id, 'orientaciones', vals)}
+                    colorClass="bg-blue-100 text-blue-800 border-blue-200"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </React.Fragment>
+      );
+    });
+  };
+
+  // --- FUNCIÓN PARA DIBUJAR LAS TABLAS DEL INFORME ---
+  const renderDashboardTable = (itemsList, sectionTitles, evaluations, rubricDescriptions, themeColor, scoreLabels) => {
+    const isEmerald = themeColor === 'emerald';
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-8">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className={`${isEmerald ? 'bg-emerald-700' : 'bg-blue-800'} text-white uppercase font-semibold text-xs`}>
+              <tr>
+                <th className="px-4 py-3 w-16">ID</th>
+                <th className="px-4 py-3 w-1/4">Criterio Evaluado</th>
+                <th className="px-4 py-3 w-24 text-center">Nivel</th>
+                {/* Si es esmeralda (Refuerzo), le damos un 30% de ancho a cada una */}
+                <th className={`px-4 py-3 ${isEmerald ? 'w-[30%]' : 'w-1/5'}`}>Fortalezas</th>
+                <th className={`px-4 py-3 ${isEmerald ? 'w-[30%]' : 'w-1/5'}`}>Mejoras</th>
+                {/* Ocultamos la cabecera si es el Plan de Refuerzo */}
+                {!isEmerald && <th className="px-4 py-3 w-1/5">Orientaciones</th>}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {itemsList.map((item, index) => {
+                const sectionPrefix = item.id.split('.')[0];
+                const previousPrefix = index > 0 ? itemsList[index - 1].id.split('.')[0] : null;
+                const isNewSection = sectionPrefix !== previousPrefix;
+
+                const ev = evaluations[item.id];
+                const score = ev?.score;
+                return (
+                  <React.Fragment key={item.id}>
+                    {isNewSection && (
+                      <tr className={`${isEmerald ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-blue-50 border-blue-200 text-blue-900'} border-y-2 break-inside-avoid`}>
+                        <td colSpan={isEmerald ? "5" : "6"} className="px-4 py-3 font-bold uppercase text-sm">
+                          {sectionTitles[sectionPrefix]}
+                        </td>
+                      </tr>
+                    )}
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 font-bold text-gray-700 align-top">{item.id}</td>
+                      <td className="px-4 py-3 font-medium text-gray-900 align-top">
+                        <div className="mb-1">{item.title}</div>
+                        {score && rubricDescriptions[item.id] && rubricDescriptions[item.id][score] && (
+                          <div className={`mt-2 text-xs p-2 rounded border font-normal break-inside-avoid ${isEmerald ? 'bg-emerald-50 text-emerald-800 border-emerald-100' : 'bg-blue-50 text-blue-800 border-blue-100'}`}>
+                            <strong>Justificación:</strong> {rubricDescriptions[item.id][score]}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-center align-top">
+                        {score ? (
+                          <span className={`inline-block px-2 py-1 rounded text-xs font-bold border ${SCORE_COLORS[score]}`}>
+                            {score} - {scoreLabels[score]}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 italic">-</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 align-top text-gray-600">
+                        {ev?.fortalezas?.length > 0 ? (
+                          <ul className="list-disc pl-4 space-y-1">
+                            {ev.fortalezas.map((f, i) => <li key={i} className="break-inside-avoid mb-1">{f}</li>)}
+                          </ul>
+                        ) : '-'}
+                      </td>
+                      <td className="px-4 py-3 align-top text-gray-600">
+                        {ev?.mejoras?.length > 0 ? (
+                          <ul className="list-disc pl-4 space-y-1">
+                            {ev.mejoras.map((m, i) => <li key={i} className="break-inside-avoid mb-1">{m}</li>)}
+                          </ul>
+                        ) : '-'}
+                      </td>
+                      {/* Ocultamos la celda si es el Plan de Refuerzo */}
+                      {!isEmerald && (
+                        <td className="px-4 py-3 align-top text-gray-600">
+                          {ev?.orientaciones?.length > 0 ? (
+                            <ul className="list-disc pl-4 space-y-1">
+                              {ev.orientaciones.map((o, i) => <li key={i} className="break-inside-avoid mb-1">{o}</li>)}
+                            </ul>
+                          ) : '-'}
+                        </td>
+                      )}
+                    </tr>
+                  </React.Fragment>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
       {/* Print styles */}
@@ -924,210 +1430,113 @@ export default function App() {
         }
       `}</style>
 
-      {/* Novedad: Header blanco para favorecer los logos con borde inferior azul */}
-      <header className="bg-white border-b-4 border-blue-800 shadow-md no-print sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center">
+      {/* CABECERA PRINCIPAL REESTRUCTURADA */}
+      <header className={`bg-white border-b-4 shadow-md no-print sticky top-0 z-50 ${activeTab.includes('refuerzo') ? 'border-emerald-600' : 'border-blue-800'}`}>
+        <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
-            {/* Si no has subido la imagen, no se romperá, simplemente no se mostrará */}
-            <img 
-              src="/banner.png" 
-              alt="Logos ARALECTO" 
-              className="h-14 sm:h-16 w-auto object-contain" 
-              onError={(e) => { e.target.style.display = 'none'; }} 
-            />
-            <h1 className="text-xl font-bold text-blue-900 ml-2">Evaluación ARALECTO</h1>
+            <img src="/banner.png" alt="Logos ARALECTO" className="h-14 sm:h-16 w-auto object-contain" onError={(e) => { e.target.style.display = 'none'; }} />
+            <h1 className="text-xl font-bold text-gray-800 ml-2">Evaluación ARALECTO</h1>
           </div>
-          <div className="flex gap-2 mt-4 sm:mt-0">
-            <button 
-              onClick={() => setActiveTab('evaluation')}
-              className={`px-4 py-2 rounded-md font-medium transition-colors ${activeTab === 'evaluation' ? 'bg-blue-800 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-            >
-              Evaluación
-            </button>
-            <button 
-              onClick={() => setActiveTab('dashboard')}
-              className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 ${activeTab === 'dashboard' ? 'bg-blue-800 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-            >
-              <BarChart2 size={18} /> Informe
-            </button>
+          
+          {/* Grupos de Botones */}
+          <div className="flex flex-col sm:flex-row gap-4 flex-wrap justify-center sm:justify-end">
+            
+            {/* GRUPO LECTURA (AZUL) */}
+            <div className="flex rounded-md shadow-sm" role="group">
+              <button 
+                onClick={() => setActiveTab('eval_lectura')}
+                className={`px-4 py-2 text-sm font-medium rounded-l-lg border transition-colors ${activeTab === 'eval_lectura' ? 'bg-blue-800 text-white border-blue-800' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+              >
+                Evaluar Plan de Lectura
+              </button>
+              <button 
+                onClick={() => setActiveTab('informe_lectura')}
+                className={`px-3 py-2 text-sm font-medium rounded-r-lg border-y border-r transition-colors flex items-center gap-1 ${activeTab === 'informe_lectura' ? 'bg-blue-800 text-white border-blue-800' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+              >
+                <BarChart2 size={16} /> Informe
+              </button>
+            </div>
+
+            {/* GRUPO REFUERZO (ESMERALDA) */}
+            <div className="flex rounded-md shadow-sm" role="group">
+              <button 
+                onClick={() => setActiveTab('eval_refuerzo')}
+                className={`px-4 py-2 text-sm font-medium rounded-l-lg border transition-colors ${activeTab === 'eval_refuerzo' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+              >
+                Evaluar Plan Refuerzo
+              </button>
+              <button 
+                onClick={() => setActiveTab('informe_refuerzo')}
+                className={`px-3 py-2 text-sm font-medium rounded-r-lg border-y border-r transition-colors flex items-center gap-1 ${activeTab === 'informe_refuerzo' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+              >
+                <BarChart2 size={16} /> Informe
+              </button>
+            </div>
+
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* CONTENIDO PRINCIPAL */}
       <main className="max-w-6xl mx-auto p-4 sm:p-6 print-full">
         
-        {/* EVALUATION TAB */}
-        {activeTab === 'evaluation' && (
-          <div className="space-y-6">
-            
-            {/* Novedad: Tarjeta de Datos Generales */}
+        {/* PESTAÑA 1: EVALUACIÓN LECTURA */}
+        {activeTab === 'eval_lectura' && (
+          <div className="space-y-6 animate-fade-in">
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 border-l-4 border-l-blue-600">
-              <h2 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Datos Generales de la Evaluación</h2>
+              <h2 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Datos Generales del Centro (Comunes)</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                    <Building size={16} className="text-blue-600"/> Centro Evaluado
-                  </label>
-                  <input 
-                    type="text" 
-                    className="w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-2.5 outline-none transition-all" 
-                    placeholder="Ej: CEIP San Jorge" 
-                    value={metaData.centro} 
-                    onChange={(e) => updateMeta('centro', e.target.value)} 
-                  />
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2"><Building size={16} className="text-blue-600"/> Centro Evaluado</label>
+                  <input type="text" className="w-full border rounded-md p-2.5 outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: CEIP San Jorge" value={metaData.centro} onChange={(e) => updateMeta('centro', e.target.value)} />
                 </div>
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                    <User size={16} className="text-blue-600"/> Asesor/a de referencia
-                  </label>
-                  <input 
-                    type="text" 
-                    className="w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-2.5 outline-none transition-all" 
-                    placeholder="Nombre completo" 
-                    value={metaData.asesor} 
-                    onChange={(e) => updateMeta('asesor', e.target.value)} 
-                  />
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2"><User size={16} className="text-blue-600"/> Asesor/a de referencia</label>
+                  <input type="text" className="w-full border rounded-md p-2.5 outline-none focus:ring-2 focus:ring-blue-500" placeholder="Nombre completo" value={metaData.asesor} onChange={(e) => updateMeta('asesor', e.target.value)} />
                 </div>
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                    <Calendar size={16} className="text-blue-600"/> Fecha de evaluación
-                  </label>
-                  <input 
-                    type="date" 
-                    className="w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-2.5 outline-none transition-all" 
-                    value={metaData.fecha} 
-                    onChange={(e) => updateMeta('fecha', e.target.value)} 
-                  />
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2"><Calendar size={16} className="text-blue-600"/> Fecha de evaluación</label>
+                  <input type="date" className="w-full border rounded-md p-2.5 outline-none focus:ring-2 focus:ring-blue-500" value={metaData.fecha} onChange={(e) => updateMeta('fecha', e.target.value)} />
                 </div>
               </div>
             </div>
 
-            {itemsList.map((item, index) => {
-              const sectionPrefix = item.id.split('.')[0];
-              const previousPrefix = index > 0 ? itemsList[index - 1].id.split('.')[0] : null;
-              const isNewSection = sectionPrefix !== previousPrefix;
-
-              const currentEval = evaluations[item.id] || { score: null, fortalezas: [], mejoras: [], orientaciones: [] };
-              const fOptions = rubricData.Fortalezas[item.id] || [];
-              const mOptions = rubricData.Mejoras[item.id] || [];
-              const oOptions = rubricData.Orientaciones[item.id] || [];
-
-              return (
-                <React.Fragment key={item.id}>
-                  {isNewSection && (
-                    <div className="mt-8 mb-2 pb-2 border-b-2 border-blue-800">
-                      <h3 className="text-xl font-bold text-blue-900 uppercase tracking-wide">
-                        {SECTION_TITLES[sectionPrefix]}
-                      </h3>
-                    </div>
-                  )}
-                  {/* Aquí se eliminó el overflow-hidden para que los menús floten */}
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                    <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-t-lg">
-                      {/* Aquí está la magia: forzamos flex-col y items-start para pegar todo a la izquierda en PC */}
-                      <div className="flex flex-col items-center text-center sm:items-start sm:text-left flex-1">
-                        <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded mb-2">Ítem {item.id}</span>
-                        <h3 className="text-lg font-semibold text-gray-800">{item.title}</h3>
-                      </div>
-                      
-                      {/* Score Buttons */}
-                      <div className="flex gap-2 shrink-0">
-                        {[1, 2, 3, 4].map(num => (
-                          <button
-                            key={num}
-                            onClick={() => updateEval(item.id, 'score', num)}
-                            className={`w-10 h-10 rounded-full font-bold transition-all border-2 
-                              ${currentEval.score === num 
-                                ? SCORE_COLORS[num] + ' ring-2 ring-offset-2 ring-gray-300' 
-                                : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'}`}
-                          >
-                            {num}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 rounded-b-lg">
-                      <div>
-                        <h4 className="text-sm font-semibold text-green-700 mb-2 uppercase">Fortalezas</h4>
-                        <MultiSelectDropdown 
-                          title="Fortalezas" 
-                          options={fOptions} 
-                          selected={currentEval.fortalezas} 
-                          onChange={(vals) => updateEval(item.id, 'fortalezas', vals)}
-                          colorClass="bg-green-100 text-green-800 border-green-200"
-                        />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-semibold text-orange-700 mb-2 uppercase">Áreas de Mejora</h4>
-                        <MultiSelectDropdown 
-                          title="Mejoras" 
-                          options={mOptions} 
-                          selected={currentEval.mejoras} 
-                          onChange={(vals) => updateEval(item.id, 'mejoras', vals)}
-                          colorClass="bg-orange-100 text-orange-800 border-orange-200"
-                        />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-semibold text-blue-700 mb-2 uppercase">Orientaciones</h4>
-                        <MultiSelectDropdown 
-                          title="Orientaciones" 
-                          options={oOptions} 
-                          selected={currentEval.orientaciones} 
-                          onChange={(vals) => updateEval(item.id, 'orientaciones', vals)}
-                          colorClass="bg-blue-100 text-blue-800 border-blue-200"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </React.Fragment>
-              );
-            })}
+            {renderEvaluationItems(itemsListLectura, SECTION_TITLES_LECTURA, rubricDataLectura, evaluationsLectura, updateEvalLectura, 'blue')}
           </div>
         )}
 
-        {/* DASHBOARD TAB */}
-        {activeTab === 'dashboard' && (
-          <div className="space-y-8 print-full">
+        {/* PESTAÑA 2: INFORME LECTURA */}
+        {activeTab === 'informe_lectura' && (
+          <div className="space-y-8 print-full animate-fade-in">
             
-            {/* Novedad: Cabecera que SOLO aparece al imprimir */}
             <div className="hidden print:block mb-8 text-center border-b-2 border-blue-800 pb-4">
-               <img 
-                  src="/banner.png" 
-                  alt="Logos ARALECTO" 
-                  className="w-full h-auto max-h-32 object-contain" 
-                  onError={(e) => { e.target.style.display = 'none'; }}
-               />
+               <img src="/banner.png" alt="Logos ARALECTO" className="w-full h-auto max-h-32 object-contain" onError={(e) => { e.target.style.display = 'none'; }}/>
             </div>
 
             <div className="flex justify-between items-end border-b pb-4 print:hidden">
               <div>
-                <h2 className="text-3xl font-bold text-gray-800">Informe de Evaluación</h2>
-                <p className="text-gray-500 mt-1">Plan de Lectura - Programa ARALECTO</p>
+                <h2 className="text-3xl font-bold text-gray-800">Informe: Plan de Lectura</h2>
+                <p className="text-gray-500 mt-1">Programa ARALECTO</p>
               </div>
-              <button 
-                onClick={handlePrint}
-                className="no-print flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded shadow hover:bg-gray-700 transition"
-              >
+              <button onClick={handlePrint} className="no-print flex items-center gap-2 bg-blue-800 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">
                 <Printer size={18} /> Imprimir / PDF
               </button>
             </div>
 
-            {/* Novedad: Recuadro con los datos generales en el informe */}
-            <div className="bg-blue-50 p-5 rounded-lg border border-blue-100 mb-6 grid grid-cols-1 sm:grid-cols-[2fr_2fr_1fr] print:grid-cols-[2fr_2fr_1fr] gap-6 break-inside-avoid">
+            {/* Recuadro de datos */}
+            <div className="bg-blue-50 p-5 rounded-lg border border-blue-200 mb-6 grid grid-cols-1 sm:grid-cols-[2fr_2fr_1fr] print:grid-cols-[2fr_2fr_1fr] gap-6 break-inside-avoid">
                <div className="flex items-center gap-3">
                   <div className="p-2 bg-blue-200 rounded-full text-blue-800 shrink-0"><Building size={20} /></div>
                   <div className="min-w-0">
                     <p className="text-xs text-blue-600 font-bold uppercase tracking-wider">Centro Evaluado</p>
-                    <p className="text-lg font-bold text-gray-900 truncate" title={metaData.centro}>{metaData.centro || <span className="text-gray-400 italic font-normal">Sin especificar</span>}</p>
+                    <p className="text-lg font-bold text-gray-900 truncate">{metaData.centro || <span className="text-gray-400 italic font-normal">Sin especificar</span>}</p>
                   </div>
                </div>
                <div className="flex items-center gap-3">
                   <div className="p-2 bg-blue-200 rounded-full text-blue-800 shrink-0"><User size={20} /></div>
                   <div className="min-w-0">
                     <p className="text-xs text-blue-600 font-bold uppercase tracking-wider">Asesor/a</p>
-                    <p className="text-lg font-bold text-gray-900 truncate" title={metaData.asesor}>{metaData.asesor || <span className="text-gray-400 italic font-normal">Sin especificar</span>}</p>
+                    <p className="text-lg font-bold text-gray-900 truncate">{metaData.asesor || <span className="text-gray-400 italic font-normal">Sin especificar</span>}</p>
                   </div>
                </div>
                <div className="flex items-center gap-3">
@@ -1141,9 +1550,8 @@ export default function App() {
                </div>
             </div>
 
-            {/* Novedad: Texto introductorio del programa ARALECTO con Título */}
+            {/* Texto Introductorio Restaurado */}
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8 break-inside-avoid">
-              {/* Aquí añadimos el nuevo título con el estilo azul de las etiquetas */}
               <h3 className="text-lg text-blue-600 font-bold uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
                 INFORME DE EVALUACIÓN Y ASESORAMIENTO DE PLAN DE LECTURA
               </h3>
@@ -1160,27 +1568,19 @@ export default function App() {
               </div>
             </div>
 
-            {/* CHART */}
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 break-inside-avoid">
-              <h3 className="text-lg font-bold text-gray-800 mb-6 text-center">Visión General de Puntuaciones</h3>
+            {/* Gráfico y Tabla Lectura */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 break-inside-avoid mb-8">
+              <h3 className="text-lg font-bold text-gray-800 mb-6 text-center">Visión General: Plan de Lectura</h3>
               <div className="h-80 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={getScoreDataForChart()} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                  <BarChart data={getScoreDataForChartLectura()} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis dataKey="name" tick={{fontSize: 12}} interval={0} angle={-45} textAnchor="end" height={60}/>
                     <YAxis domain={[0, 4]} ticks={[0, 1, 2, 3, 4]} />
-                    <Tooltip 
-                      formatter={(value, name, props) => [`${value} - ${SCORE_LABELS[value] || 'Sin evaluar'}`, 'Puntuación']}
-                      labelFormatter={(label, payload) => payload?.[0]?.payload?.fullTitle || label}
-                    />
+                    <Tooltip formatter={(value) => [`${value} - ${SCORE_LABELS_LECTURA[value] || 'Sin evaluar'}`, 'Puntuación']} labelFormatter={(label, payload) => payload?.[0]?.payload?.fullTitle || label} />
                     <Bar dataKey="puntuacion" radius={[4, 4, 0, 0]}>
-                      {getScoreDataForChart().map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={
-                          entry.puntuacion === 4 ? '#22c55e' : 
-                          entry.puntuacion === 3 ? '#eab308' : 
-                          entry.puntuacion === 2 ? '#f97316' : 
-                          entry.puntuacion === 1 ? '#ef4444' : '#e5e7eb'
-                        } />
+                      {getScoreDataForChartLectura().map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.puntuacion === 4 ? '#22c55e' : entry.puntuacion === 3 ? '#eab308' : entry.puntuacion === 2 ? '#f97316' : entry.puntuacion === 1 ? '#ef4444' : '#e5e7eb'} />
                       ))}
                     </Bar>
                   </BarChart>
@@ -1188,89 +1588,122 @@ export default function App() {
               </div>
             </div>
 
-            {/* DETAILED TABLE */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead className="bg-blue-800 text-white uppercase font-semibold text-xs">
-                    <tr>
-                      <th className="px-4 py-3 w-16">ID</th>
-                      <th className="px-4 py-3 w-1/4">Criterio Evaluado</th>
-                      <th className="px-4 py-3 w-24 text-center">Nivel</th>
-                      <th className="px-4 py-3 w-1/5">Fortalezas</th>
-                      <th className="px-4 py-3 w-1/5">Mejoras</th>
-                      <th className="px-4 py-3 w-1/5">Orientaciones</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {itemsList.map((item, index) => {
-                      const sectionPrefix = item.id.split('.')[0];
-                      const previousPrefix = index > 0 ? itemsList[index - 1].id.split('.')[0] : null;
-                      const isNewSection = sectionPrefix !== previousPrefix;
+            {renderDashboardTable(itemsListLectura, SECTION_TITLES_LECTURA, evaluationsLectura, RUBRIC_DESCRIPTIONS_LECTURA, 'blue', SCORE_LABELS_LECTURA)}
+          </div>
+        )}
 
-                      const ev = evaluations[item.id];
-                      const score = ev?.score;
-                      return (
-                        <React.Fragment key={item.id}>
-                          {isNewSection && (
-                            <tr className="bg-blue-50 border-y-2 border-blue-200 break-inside-avoid">
-                              <td colSpan="6" className="px-4 py-3 font-bold text-blue-900 uppercase text-sm">
-                                {SECTION_TITLES[sectionPrefix]}
-                              </td>
-                            </tr>
-                          )}
-                          <tr className="hover:bg-gray-50">
-                            <td className="px-4 py-3 font-bold text-gray-700 align-top">{item.id}</td>
-                            <td className="px-4 py-3 font-medium text-gray-900 align-top">
-                              <div className="mb-1">{item.title}</div>
-                              {/* Esta es la parte que lee el diccionario que acabas de pegar */}
-                              {score && RUBRIC_DESCRIPTIONS[item.id] && RUBRIC_DESCRIPTIONS[item.id][score] && (
-                                <div className="mt-2 text-xs text-blue-800 bg-blue-50 p-2 rounded border border-blue-100 font-normal break-inside-avoid">
-                                  <strong>Justificación de la valoración:</strong> {RUBRIC_DESCRIPTIONS[item.id][score]}
-                                </div>
-                              )}
-                            </td>
-                            <td className="px-4 py-3 text-center align-top">
-                              {score ? (
-                                <span className={`inline-block px-2 py-1 rounded text-xs font-bold border ${SCORE_COLORS[score]}`}>
-                                  {score} - {SCORE_LABELS[score]}
-                                </span>
-                              ) : (
-                                <span className="text-gray-400 italic">-</span>
-                              )}
-                            </td>
-                            <td className="px-4 py-3 align-top text-gray-600">
-                              {ev?.fortalezas?.length > 0 ? (
-                                <ul className="list-disc pl-4 space-y-1">
-                                 {ev.fortalezas.map((f, i) => <li key={i} className="break-inside-avoid mb-1">{f}</li>)}
-                                </ul>
-                              ) : '-'}
-                            </td>
-                            <td className="px-4 py-3 align-top text-gray-600">
-                              {ev?.mejoras?.length > 0 ? (
-                                <ul className="list-disc pl-4 space-y-1">
-                                  {ev.mejoras.map((m, i) => <li key={i} className="break-inside-avoid mb-1">{m}</li>)}
-                                </ul>
-                              ) : '-'}
-                            </td>
-                            <td className="px-4 py-3 align-top text-gray-600">
-                              {ev?.orientaciones?.length > 0 ? (
-                                <ul className="list-disc pl-4 space-y-1">
-                                  {ev.orientaciones.map((o, i) => <li key={i} className="break-inside-avoid mb-1">{o}</li>)}
-                                </ul>
-                              ) : '-'}
-                            </td>
-                          </tr>
-                        </React.Fragment>
-                      );
-                    })}
-                  </tbody>
-                </table>
+        {/* PESTAÑA 3: EVALUACIÓN REFUERZO */}
+        {activeTab === 'eval_refuerzo' && (
+          <div className="space-y-6 animate-fade-in">
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 border-l-4 border-l-emerald-600">
+              <h2 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Datos Generales del Centro (Comunes)</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2"><Building size={16} className="text-emerald-600"/> Centro Evaluado</label>
+                  <input type="text" className="w-full border rounded-md p-2.5 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Ej: CEIP San Jorge" value={metaData.centro} onChange={(e) => updateMeta('centro', e.target.value)} />
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2"><User size={16} className="text-emerald-600"/> Asesor/a de referencia</label>
+                  <input type="text" className="w-full border rounded-md p-2.5 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Nombre completo" value={metaData.asesor} onChange={(e) => updateMeta('asesor', e.target.value)} />
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2"><Calendar size={16} className="text-emerald-600"/> Fecha de evaluación</label>
+                  <input type="date" className="w-full border rounded-md p-2.5 outline-none focus:ring-2 focus:ring-emerald-500" value={metaData.fecha} onChange={(e) => updateMeta('fecha', e.target.value)} />
+                </div>
+              </div>
+            </div>
+
+            {renderEvaluationItems(itemsListRefuerzo, SECTION_TITLES_REFUERZO, rubricDataRefuerzo, evaluationsRefuerzo, updateEvalRefuerzo, 'emerald')}
+          </div>
+        )}
+
+        {/* PESTAÑA 4: INFORME REFUERZO */}
+        {activeTab === 'informe_refuerzo' && (
+          <div className="space-y-8 print-full animate-fade-in">
+            
+            <div className="hidden print:block mb-8 text-center border-b-2 border-emerald-600 pb-4">
+               <img src="/banner.png" alt="Logos ARALECTO" className="w-full h-auto max-h-32 object-contain" onError={(e) => { e.target.style.display = 'none'; }}/>
+            </div>
+
+            <div className="flex justify-between items-end border-b pb-4 print:hidden">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-800">Informe: Plan de Refuerzo</h2>
+                <p className="text-gray-500 mt-1">Programa ARALECTO</p>
+              </div>
+              <button onClick={handlePrint} className="no-print flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded shadow hover:bg-emerald-700 transition">
+                <Printer size={18} /> Imprimir / PDF
+              </button>
+            </div>
+
+            {/* Recuadro de datos */}
+            <div className="bg-emerald-50 p-5 rounded-lg border border-emerald-200 mb-6 grid grid-cols-1 sm:grid-cols-[2fr_2fr_1fr] print:grid-cols-[2fr_2fr_1fr] gap-6 break-inside-avoid">
+               <div className="flex items-center gap-3">
+                  <div className="p-2 bg-emerald-200 rounded-full text-emerald-800 shrink-0"><Building size={20} /></div>
+                  <div className="min-w-0">
+                    <p className="text-xs text-emerald-600 font-bold uppercase tracking-wider">Centro Evaluado</p>
+                    <p className="text-lg font-bold text-gray-900 truncate">{metaData.centro || <span className="text-gray-400 italic font-normal">Sin especificar</span>}</p>
+                  </div>
+               </div>
+               <div className="flex items-center gap-3">
+                  <div className="p-2 bg-emerald-200 rounded-full text-emerald-800 shrink-0"><User size={20} /></div>
+                  <div className="min-w-0">
+                    <p className="text-xs text-emerald-600 font-bold uppercase tracking-wider">Asesor/a</p>
+                    <p className="text-lg font-bold text-gray-900 truncate">{metaData.asesor || <span className="text-gray-400 italic font-normal">Sin especificar</span>}</p>
+                  </div>
+               </div>
+               <div className="flex items-center gap-3">
+                  <div className="p-2 bg-emerald-200 rounded-full text-emerald-800 shrink-0"><Calendar size={20} /></div>
+                  <div className="min-w-0">
+                    <p className="text-xs text-emerald-600 font-bold uppercase tracking-wider">Fecha</p>
+                    <p className="text-lg font-bold text-gray-900 truncate">
+                      {metaData.fecha ? new Date(metaData.fecha).toLocaleDateString('es-ES') : <span className="text-gray-400 italic font-normal">Sin especificar</span>}
+                    </p>
+                  </div>
+               </div>
+            </div>
+
+            {/* Texto Introductorio Refuerzo */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8 break-inside-avoid">
+              <h3 className="text-lg text-emerald-600 font-bold uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
+                VALORACIÓN TÉCNICA Y FORMATIVA DEL PLAN DE REFUERZO
+              </h3>
+              <div className="text-gray-700 text-sm leading-relaxed text-justify space-y-4">
+                <p>
+                  El presente informe tiene como finalidad ofrecer una valoración técnica y formativa del Plan de Refuerzo de la Competencia Lectora elaborado por el centro en el marco del Programa ARALECTO. La información recogida se fundamenta en el análisis sistemático realizado por las asesorías de formación a partir de las evidencias aportadas en el plan presentado. Este proceso permite identificar fortalezas, detectar áreas de mejora y reconocer prácticas de especial interés que puedan contribuir al desarrollo de propuestas lectoras cada vez más eficaces y ajustadas a las necesidades del alumnado.
+                </p>
+                <p>
+                  La valoración realizada pretende servir de apoyo a los centros educativos en sus procesos de reflexión, planificación y mejora continua, favoreciendo la consolidación de aquellas actuaciones que muestran resultados positivos y orientando posibles líneas de desarrollo futuro. Asimismo, el análisis conjunto de los planes facilita la identificación de tendencias, necesidades compartidas y buenas prácticas que pueden enriquecer el trabajo colaborativo entre centros y fortalecer la cultura lectora.
+                </p>
+                <p>
+                  Todo ello contribuye a impulsar propuestas lectoras cada vez más coherentes, inclusivas, contextualizadas y sostenibles, favoreciendo el desarrollo de la competencia lectora del alumnado y la mejora de la calidad educativa en el conjunto del sistema educativo.
+                </p>
               </div>
             </div>
             
+            {/* Gráfico y Tabla Refuerzo */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 break-inside-avoid mb-8">
+              <h3 className="text-lg font-bold text-gray-800 mb-6 text-center">Visión General: Plan de Refuerzo</h3>
+              <div className="h-80 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={getScoreDataForChartRefuerzo()} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="name" tick={{fontSize: 12}} interval={0} angle={-45} textAnchor="end" height={60}/>
+                    <YAxis domain={[0, 4]} ticks={[0, 1, 2, 3, 4]} />
+                    <Tooltip formatter={(value) => [`${value} - ${SCORE_LABELS_REFUERZO[value] || 'Sin evaluar'}`, 'Puntuación']} labelFormatter={(label, payload) => payload?.[0]?.payload?.fullTitle || label} />
+                    <Bar dataKey="puntuacion" radius={[4, 4, 0, 0]}>
+                      {getScoreDataForChartRefuerzo().map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.puntuacion === 4 ? '#22c55e' : entry.puntuacion === 3 ? '#eab308' : entry.puntuacion === 2 ? '#f97316' : entry.puntuacion === 1 ? '#ef4444' : '#e5e7eb'} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {renderDashboardTable(itemsListRefuerzo, SECTION_TITLES_REFUERZO, evaluationsRefuerzo, RUBRIC_DESCRIPTIONS_REFUERZO, 'emerald', SCORE_LABELS_REFUERZO)}
           </div>
         )}
+
       </main>
 
       {/* PIE DE PÁGINA / CRÉDITOS */}
