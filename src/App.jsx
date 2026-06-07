@@ -226,7 +226,7 @@ Mejoras
 Orientaciones (asesoramiento)
 Ítem 4-5.a. Fomento del hábito lector y comprensión (puntos 1, 2, 5)
 ☐ Diseñar actividades variadas que aborden distintas dimensiones de la lectura (aprender a leer, leer para aprender, leer para disfrutar).
-☐ Incorporar metodologías activas (tertulias dialógicas, clubes de lectura, lectura compartida, entre lineas).
+☐ Incorporar metodologías activas (tertulias dialógicas, clubes de lectura, lectura compartida, entre líneas).
 ☐ Fomentar la participación del alumnado en las actividades lectoras.
 ☐ Planificar las actuaciones con continuidad a lo largo del curso.
 ☐ Vincular las actividades con los objetivos del plan y su evaluación.
@@ -279,7 +279,7 @@ Mejoras
 ☐ No se tienen en cuenta las diferencias en la competencia lectora del alumnado.
 ☐ La atención a la diversidad es general o poco concreta.
 ☐ No se identifican desigualdades en el rendimiento lector.
-☐ No se contempla la possible brecha de género.
+☐ No se contempla la posible brecha de género.
 ☐ No se adaptan las lecturas a distintos niveles o necesidades.
 ☐ No se promueve la equidad en el desarrollo de la competencia lectora.
 Orientaciones (asesoramiento)
@@ -352,7 +352,7 @@ Mejoras
 ☐ No se definen momentos de seguimiento.
 ☐ La evaluación del plan es puntual o inexistente.
 ☐ No participan los diferentes agentes que están implicados en la mejora de la competencia lectora.
-☐ No se observa que los resultados estén vinculados a la mejorar del plan.
+☐ No se observa que los resultados estén vinculados a la mejora del plan.
 Orientaciones (asesoramiento)
 Ítem 8.a. Diseño del sistema de evaluación del Plan de Lectura 
 ☐ Incorporar distintos ámbitos de evaluación (alumnado, organización, actividades).
