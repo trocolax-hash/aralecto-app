@@ -873,7 +873,7 @@ const RUBRIC_DESCRIPTIONS_REFUERZO = {
     1: "No existe diagnóstico o resulta insuficiente."
   },
   "1.2": {
-    4: "Los criterios están claramente definidos y justifycados.",
+    4: "Los criterios están claramente definidos y justificados.",
     3: "Los criterios son adecuados, aunque poco detallados.",
     2: "Los criterios aparecen de forma parcial.",
     1: "No se explicitan criterios."
