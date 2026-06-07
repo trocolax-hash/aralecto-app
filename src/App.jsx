@@ -199,7 +199,7 @@ Fortalezas
 Mejoras 
 Ítem 4-5.a. Fomento del hábito lector y comprensión (puntos 1, 2, 5)
 ☐ Las actividades son escasas o poco variadas.
-☐ Se centran en una visión limitada de la lectura (por ejemplo, tendencia a la lectura para disfrutar, olvidando aspectos claves como aprender a leer o leer para aprender).
+☐ Se centran en una visión limitada de la lectura (por ejemplo, tendencia a la lectura para disfrutar, olvidando aspectos clave como aprender a leer o leer para aprender).
 ☐ No se trabajan todas las dimensiones de la competencia lectora.
 ☐ Falta planificación o continuidad en las actuaciones.
 ☐ Las actividades son poco motivadoras o poco participativas.
@@ -570,7 +570,7 @@ const RUBRIC_DESCRIPTIONS_LECTURA = {
   },
   "3.b": {
     1: "No se realiza un diagnóstico por áreas o este es muy limitado y poco relevante.",
-    2: "Incluye referencias generales al uso de la lectura en algunas áreas, sin un análisis systematic ni conexión clara con las programaciones.",
+    2: "Incluye referencias generales al uso de la lectura en algunas áreas, sin un análisis sistematico ni conexión clara con las programaciones.",
     3: "Presenta un diagnóstico por áreas adecuado, con información relevante sobre el uso de la lectura en distintas materias, aunque con menor profundidad o sistematicidad.",
     4: "Desarrolla un diagnóstico detallado por áreas, analizando las prácticas lectoras en las distintas materias, los tipos de textos utilizados y la actitud del alumnado, con coherencia respecto a las programaciones didácticas."
   },
