@@ -279,7 +279,7 @@ Mejoras
 ☐ No se tienen en cuenta las diferencias en la competencia lectora del alumnado.
 ☐ La atención a la diversidad es general o poco concreta.
 ☐ No se identifican desigualdades en el rendimiento lector.
-☐ No se contempla la posible brecha de género.
+☐ No se contempla la possible brecha de género.
 ☐ No se adaptan las lecturas a distintos niveles o necesidades.
 ☐ No se promueve la equidad en el desarrollo de la competencia lectora.
 Orientaciones (asesoramiento)
@@ -873,7 +873,7 @@ const RUBRIC_DESCRIPTIONS_REFUERZO = {
     1: "No existe diagnóstico o resulta insuficiente."
   },
   "1.2": {
-    4: "Los criterios están claramente definidos y justificados.",
+    4: "Los criterios están claramente definidos y justifycados.",
     3: "Los criterios son adecuados, aunque poco detallados.",
     2: "Los criterios aparecen de forma parcial.",
     1: "No se explicitan criterios."
@@ -1183,9 +1183,10 @@ export default function App() {
     }));
   };
 
-  const updateEvalRefuerzo = (itemId, field, value) => {
+  // Función genérica para guardar datos de Refuerzo (tanto notas de ítems como feedback de dimensión)
+  const updateEvalRefuerzo = (keyId, field, value) => {
     setEvaluationsRefuerzo(prev => ({
-      ...prev, [itemId]: { ...prev[itemId], [field]: value }
+      ...prev, [keyId]: { ...prev[keyId], [field]: value }
     }));
   };
 
@@ -1242,33 +1243,31 @@ export default function App() {
     );
   }
 
-  // --- FUNCIÓN PARA DIBUJAR LOS ÍTEMS DE EVALUACIÓN ---
-  const renderEvaluationItems = (itemsList, sectionTitles, rubricData, evaluations, updateEvalFn, themeColor) => {
-    const isEmerald = themeColor === 'emerald';
-    
-    return itemsList.map((item, index) => {
+  // --- FUNCIÓN PARA DIBUJAR LOS ÍTEMS DE EVALUACIÓN (LECTURA) ---
+  const renderEvaluationItemsLectura = () => {
+    return itemsListLectura.map((item, index) => {
       const sectionPrefix = item.id.split('.')[0];
-      const previousPrefix = index > 0 ? itemsList[index - 1].id.split('.')[0] : null;
+      const previousPrefix = index > 0 ? itemsListLectura[index - 1].id.split('.')[0] : null;
       const isNewSection = sectionPrefix !== previousPrefix;
 
-      const currentEval = evaluations[item.id] || { score: null, fortalezas: [], mejoras: [], orientaciones: [] };
-      const fOptions = rubricData.Fortalezas[item.id] || [];
-      const mOptions = rubricData.Mejoras[item.id] || [];
-      const oOptions = rubricData.Orientaciones[item.id] || [];
+      const currentEval = evaluationsLectura[item.id] || { score: null, fortalezas: [], mejoras: [], orientaciones: [] };
+      const fOptions = rubricDataLectura.Fortalezas[item.id] || [];
+      const mOptions = rubricDataLectura.Mejoras[item.id] || [];
+      const oOptions = rubricDataLectura.Orientaciones[item.id] || [];
 
       return (
         <React.Fragment key={item.id}>
           {isNewSection && (
-            <div className={`mt-8 mb-2 pb-2 border-b-2 ${isEmerald ? 'border-emerald-700' : 'border-blue-800'}`}>
-              <h3 className={`text-xl font-bold uppercase tracking-wide ${isEmerald ? 'text-emerald-800' : 'text-blue-900'}`}>
-                {sectionTitles[sectionPrefix]}
+            <div className="mt-8 mb-2 pb-2 border-b-2 border-blue-800">
+              <h3 className="text-xl font-bold uppercase tracking-wide text-blue-900">
+                {SECTION_TITLES_LECTURA[sectionPrefix]}
               </h3>
             </div>
           )}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-t-lg">
               <div className="flex flex-col items-center text-center sm:items-start sm:text-left flex-1">
-                <span className={`inline-block px-2 py-1 text-xs font-bold rounded mb-2 ${isEmerald ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}`}>
+                <span className="inline-block px-2 py-1 text-xs font-bold rounded mb-2 bg-blue-100 text-blue-800">
                   Ítem {item.id}
                 </span>
                 <h3 className="text-lg font-semibold text-gray-800">{item.title}</h3>
@@ -1278,7 +1277,7 @@ export default function App() {
                 {[1, 2, 3, 4].map(num => (
                   <button
                     key={num}
-                    onClick={() => updateEvalFn(item.id, 'score', num)}
+                    onClick={() => updateEvalLectura(item.id, 'score', num)}
                     className={`w-10 h-10 rounded-full font-bold transition-all border-2 
                       ${currentEval.score === num 
                         ? SCORE_COLORS[num] + ' ring-2 ring-offset-2 ring-gray-300' 
@@ -1294,31 +1293,22 @@ export default function App() {
               {fOptions.length > 0 && (
                 <div>
                   <h4 className="text-sm font-semibold text-green-700 mb-2 uppercase">Fortalezas</h4>
-                  <MultiSelectDropdown 
-                    title="Fortalezas" options={fOptions} selected={currentEval.fortalezas} 
-                    onChange={(vals) => updateEvalFn(item.id, 'fortalezas', vals)}
-                    colorClass="bg-green-100 text-green-800 border-green-200"
-                  />
+                  <MultiSelectDropdown title="Fortalezas" options={fOptions} selected={currentEval.fortalezas} 
+                    onChange={(vals) => updateEvalLectura(item.id, 'fortalezas', vals)} colorClass="bg-green-100 text-green-800 border-green-200" />
                 </div>
               )}
               {mOptions.length > 0 && (
                 <div>
                   <h4 className="text-sm font-semibold text-orange-700 mb-2 uppercase">Áreas de Mejora</h4>
-                  <MultiSelectDropdown 
-                    title="Mejoras" options={mOptions} selected={currentEval.mejoras} 
-                    onChange={(vals) => updateEvalFn(item.id, 'mejoras', vals)}
-                    colorClass="bg-orange-100 text-orange-800 border-orange-200"
-                  />
+                  <MultiSelectDropdown title="Mejoras" options={mOptions} selected={currentEval.mejoras} 
+                    onChange={(vals) => updateEvalLectura(item.id, 'mejoras', vals)} colorClass="bg-orange-100 text-orange-800 border-orange-200" />
                 </div>
               )}
               {oOptions.length > 0 && (
                 <div>
                   <h4 className="text-sm font-semibold text-blue-700 mb-2 uppercase">Orientaciones</h4>
-                  <MultiSelectDropdown 
-                    title="Orientaciones" options={oOptions} selected={currentEval.orientaciones} 
-                    onChange={(vals) => updateEvalFn(item.id, 'orientaciones', vals)}
-                    colorClass="bg-blue-100 text-blue-800 border-blue-200"
-                  />
+                  <MultiSelectDropdown title="Orientaciones" options={oOptions} selected={currentEval.orientaciones} 
+                    onChange={(vals) => updateEvalLectura(item.id, 'orientaciones', vals)} colorClass="bg-blue-100 text-blue-800 border-blue-200" />
                 </div>
               )}
             </div>
@@ -1328,56 +1318,135 @@ export default function App() {
     });
   };
 
-  // --- FUNCIÓN PARA DIBUJAR LAS TABLAS DEL INFORME ---
-  const renderDashboardTable = (itemsList, sectionTitles, evaluations, rubricDescriptions, themeColor, scoreLabels) => {
-    const isEmerald = themeColor === 'emerald';
+  // --- FUNCIÓN PARA DIBUJAR LOS ÍTEMS DE EVALUACIÓN (REFUERZO - MODO AGRUPADO) ---
+  const renderEvaluationItemsRefuerzo = () => {
+    return itemsListRefuerzo.map((item, index) => {
+      const sectionPrefix = item.id.split('.')[0];
+      const nextItem = itemsListRefuerzo[index + 1];
+      
+      const isNewSection = index === 0 || sectionPrefix !== itemsListRefuerzo[index - 1].id.split('.')[0];
+      const isLastItemInSection = !nextItem || nextItem.id.split('.')[0] !== sectionPrefix;
+
+      const currentEval = evaluationsRefuerzo[item.id] || { score: null };
+      
+      // Creamos una clave única para guardar los comentarios de toda la dimensión (ej: "D1", "D2")
+      const dimKey = `D${sectionPrefix}`;
+      const dimEval = evaluationsRefuerzo[dimKey] || { fortalezas: [], mejoras: [] };
+      
+      // Cogemos las opciones del primer ítem de la dimensión (ej: 1.1, 2.1) porque son iguales para todos
+      const firstItemId = `${sectionPrefix}.1`;
+      const fOptions = rubricDataRefuerzo.Fortalezas[firstItemId] || [];
+      const mOptions = rubricDataRefuerzo.Mejoras[firstItemId] || [];
+
+      return (
+        <React.Fragment key={item.id}>
+          {isNewSection && (
+            <div className="mt-8 mb-2 pb-2 border-b-2 border-emerald-700">
+              <h3 className="text-xl font-bold uppercase tracking-wide text-emerald-800">
+                {SECTION_TITLES_REFUERZO[sectionPrefix]}
+              </h3>
+            </div>
+          )}
+          
+          {/* Tarjeta solo con el título y la puntuación */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
+            <div className="bg-gray-50 px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-lg">
+              <div className="flex flex-col items-center text-center sm:items-start sm:text-left flex-1">
+                <span className="inline-block px-2 py-1 text-xs font-bold rounded mb-2 bg-emerald-100 text-emerald-800">
+                  Ítem {item.id}
+                </span>
+                <h3 className="text-lg font-semibold text-gray-800">{item.title}</h3>
+              </div>
+              
+              <div className="flex gap-2 shrink-0">
+                {[1, 2, 3, 4].map(num => (
+                  <button
+                    key={num}
+                    onClick={() => updateEvalRefuerzo(item.id, 'score', num)}
+                    className={`w-10 h-10 rounded-full font-bold transition-all border-2 
+                      ${currentEval.score === num 
+                        ? SCORE_COLORS[num] + ' ring-2 ring-offset-2 ring-gray-300' 
+                        : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'}`}
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Si es el último ítem de la dimensión, mostramos el panel global de Fortalezas/Mejoras */}
+          {isLastItemInSection && (
+            <div className="bg-emerald-50 rounded-lg shadow-sm border border-emerald-200 p-6 mb-8 mt-2 animate-fade-in">
+              <h4 className="text-md font-bold text-emerald-800 mb-4 uppercase border-b border-emerald-200 pb-2">
+                Valoración Global de la Dimensión {sectionPrefix}
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h5 className="text-sm font-semibold text-green-700 mb-2 uppercase">Fortalezas Identificadas</h5>
+                  <MultiSelectDropdown title="Fortalezas de la Dimensión" options={fOptions} selected={dimEval.fortalezas} 
+                    onChange={(vals) => updateEvalRefuerzo(dimKey, 'fortalezas', vals)} colorClass="bg-green-100 text-green-800 border-green-200" />
+                </div>
+                <div>
+                  <h5 className="text-sm font-semibold text-orange-700 mb-2 uppercase">Propuestas de Mejora</h5>
+                  <MultiSelectDropdown title="Mejoras de la Dimensión" options={mOptions} selected={dimEval.mejoras} 
+                    onChange={(vals) => updateEvalRefuerzo(dimKey, 'mejoras', vals)} colorClass="bg-orange-100 text-orange-800 border-orange-200" />
+                </div>
+              </div>
+            </div>
+          )}
+        </React.Fragment>
+      );
+    });
+  };
+
+  // --- FUNCIÓN PARA DIBUJAR LA TABLA DEL INFORME (LECTURA) ---
+  const renderDashboardTableLectura = () => {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-8">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className={`${isEmerald ? 'bg-emerald-700' : 'bg-blue-800'} text-white uppercase font-semibold text-xs`}>
+            <thead className="bg-blue-800 text-white uppercase font-semibold text-xs">
               <tr>
                 <th className="px-4 py-3 w-16">ID</th>
                 <th className="px-4 py-3 w-1/4">Criterio Evaluado</th>
                 <th className="px-4 py-3 w-24 text-center">Nivel</th>
-                {/* Si es esmeralda (Refuerzo), le damos un 30% de ancho a cada una */}
-                <th className={`px-4 py-3 ${isEmerald ? 'w-[30%]' : 'w-1/5'}`}>Fortalezas</th>
-                <th className={`px-4 py-3 ${isEmerald ? 'w-[30%]' : 'w-1/5'}`}>Mejoras</th>
-                {/* Ocultamos la cabecera si es el Plan de Refuerzo */}
-                {!isEmerald && <th className="px-4 py-3 w-1/5">Orientaciones</th>}
+                <th className="px-4 py-3 w-1/5">Fortalezas</th>
+                <th className="px-4 py-3 w-1/5">Mejoras</th>
+                <th className="px-4 py-3 w-1/5">Orientaciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {itemsList.map((item, index) => {
+              {itemsListLectura.map((item, index) => {
                 const sectionPrefix = item.id.split('.')[0];
-                const previousPrefix = index > 0 ? itemsList[index - 1].id.split('.')[0] : null;
+                const previousPrefix = index > 0 ? itemsListLectura[index - 1].id.split('.')[0] : null;
                 const isNewSection = sectionPrefix !== previousPrefix;
 
-                const ev = evaluations[item.id];
+                const ev = evaluationsLectura[item.id];
                 const score = ev?.score;
                 return (
                   <React.Fragment key={item.id}>
                     {isNewSection && (
-                      <tr className={`${isEmerald ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-blue-50 border-blue-200 text-blue-900'} border-y-2 break-inside-avoid`}>
-                        <td colSpan={isEmerald ? "5" : "6"} className="px-4 py-3 font-bold uppercase text-sm">
-                          {sectionTitles[sectionPrefix]}
+                      <tr className="bg-blue-50 border-blue-200 text-blue-900 border-y-2 break-inside-avoid">
+                        <td colSpan="6" className="px-4 py-3 font-bold uppercase text-sm">
+                          {SECTION_TITLES_LECTURA[sectionPrefix]}
                         </td>
                       </tr>
                     )}
-                    <tr className="hover:bg-gray-50">
+                    <tr className="hover:bg-gray-50 break-inside-avoid">
                       <td className="px-4 py-3 font-bold text-gray-700 align-top">{item.id}</td>
                       <td className="px-4 py-3 font-medium text-gray-900 align-top">
                         <div className="mb-1">{item.title}</div>
-                        {score && rubricDescriptions[item.id] && rubricDescriptions[item.id][score] && (
-                          <div className={`mt-2 text-xs p-2 rounded border font-normal break-inside-avoid ${isEmerald ? 'bg-emerald-50 text-emerald-800 border-emerald-100' : 'bg-blue-50 text-blue-800 border-blue-100'}`}>
-                            <strong>Justificación:</strong> {rubricDescriptions[item.id][score]}
+                        {score && RUBRIC_DESCRIPTIONS_LECTURA[item.id] && RUBRIC_DESCRIPTIONS_LECTURA[item.id][score] && (
+                          <div className="mt-2 text-xs p-2 rounded border font-normal break-inside-avoid bg-blue-50 text-blue-800 border-blue-100">
+                            <strong>Justificación:</strong> {RUBRIC_DESCRIPTIONS_LECTURA[item.id][score]}
                           </div>
                         )}
                       </td>
                       <td className="px-4 py-3 text-center align-top">
                         {score ? (
                           <span className={`inline-block px-2 py-1 rounded text-xs font-bold border ${SCORE_COLORS[score]}`}>
-                            {score} - {scoreLabels[score]}
+                            {score} - {SCORE_LABELS_LECTURA[score]}
                           </span>
                         ) : (
                           <span className="text-gray-400 italic">-</span>
@@ -1397,17 +1466,106 @@ export default function App() {
                           </ul>
                         ) : '-'}
                       </td>
-                      {/* Ocultamos la celda si es el Plan de Refuerzo */}
-                      {!isEmerald && (
-                        <td className="px-4 py-3 align-top text-gray-600">
-                          {ev?.orientaciones?.length > 0 ? (
-                            <ul className="list-disc pl-4 space-y-1">
-                              {ev.orientaciones.map((o, i) => <li key={i} className="break-inside-avoid mb-1">{o}</li>)}
-                            </ul>
-                          ) : '-'}
-                        </td>
-                      )}
+                      <td className="px-4 py-3 align-top text-gray-600">
+                        {ev?.orientaciones?.length > 0 ? (
+                          <ul className="list-disc pl-4 space-y-1">
+                            {ev.orientaciones.map((o, i) => <li key={i} className="break-inside-avoid mb-1">{o}</li>)}
+                          </ul>
+                        ) : '-'}
+                      </td>
                     </tr>
+                  </React.Fragment>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
+  // --- FUNCIÓN PARA DIBUJAR LA TABLA DEL INFORME (REFUERZO - MODO AGRUPADO) ---
+  const renderDashboardTableRefuerzo = () => {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-8">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-emerald-700 text-white uppercase font-semibold text-xs">
+              <tr>
+                <th className="px-4 py-3 w-[10%]">ID</th>
+                <th className="px-4 py-3 w-[60%]">Criterio Evaluado</th>
+                <th className="px-4 py-3 w-[30%] text-center">Nivel</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {itemsListRefuerzo.map((item, index) => {
+                const sectionPrefix = item.id.split('.')[0];
+                const nextItem = itemsListRefuerzo[index + 1];
+                
+                const isNewSection = index === 0 || sectionPrefix !== itemsListRefuerzo[index - 1].id.split('.')[0];
+                const isLastItemInSection = !nextItem || nextItem.id.split('.')[0] !== sectionPrefix;
+
+                const ev = evaluationsRefuerzo[item.id];
+                const score = ev?.score;
+                
+                const dimKey = `D${sectionPrefix}`;
+                const dimEval = evaluationsRefuerzo[dimKey];
+
+                return (
+                  <React.Fragment key={item.id}>
+                    {isNewSection && (
+                      <tr className="bg-emerald-50 border-emerald-200 text-emerald-900 border-y-2 break-inside-avoid">
+                        <td colSpan="3" className="px-4 py-3 font-bold uppercase text-sm">
+                          {SECTION_TITLES_REFUERZO[sectionPrefix]}
+                        </td>
+                      </tr>
+                    )}
+                    <tr className="hover:bg-gray-50 break-inside-avoid">
+                      <td className="px-4 py-3 font-bold text-gray-700 align-top">{item.id}</td>
+                      <td className="px-4 py-3 font-medium text-gray-900 align-top">
+                        <div className="mb-1">{item.title}</div>
+                        {score && RUBRIC_DESCRIPTIONS_REFUERZO[item.id] && RUBRIC_DESCRIPTIONS_REFUERZO[item.id][score] && (
+                          <div className="mt-2 text-xs p-2 rounded border font-normal break-inside-avoid bg-emerald-50 text-emerald-800 border-emerald-100">
+                            <strong>Justificación:</strong> {RUBRIC_DESCRIPTIONS_REFUERZO[item.id][score]}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-center align-top">
+                        {score ? (
+                          <span className={`inline-block px-2 py-1 rounded text-xs font-bold border ${SCORE_COLORS[score]}`}>
+                            {score} - {SCORE_LABELS_REFUERZO[score]}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 italic">-</span>
+                        )}
+                      </td>
+                    </tr>
+                    
+                    {/* Fila extra al final de la dimensión para mostrar las Fortalezas y Mejoras globales */}
+                    {isLastItemInSection && (dimEval?.fortalezas?.length > 0 || dimEval?.mejoras?.length > 0) && (
+                      <tr className="bg-emerald-50/50 break-inside-avoid border-b-4 border-b-emerald-200">
+                        <td colSpan="3" className="px-6 py-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {dimEval?.fortalezas?.length > 0 && (
+                              <div>
+                                <h5 className="text-xs font-bold text-green-700 uppercase mb-2">Fortalezas de la Dimensión</h5>
+                                <ul className="list-disc pl-4 space-y-1 text-gray-700 text-sm">
+                                  {dimEval.fortalezas.map((f, i) => <li key={i}>{f}</li>)}
+                                </ul>
+                              </div>
+                            )}
+                            {dimEval?.mejoras?.length > 0 && (
+                              <div>
+                                <h5 className="text-xs font-bold text-orange-700 uppercase mb-2">Propuestas de Mejora</h5>
+                                <ul className="list-disc pl-4 space-y-1 text-gray-700 text-sm">
+                                  {dimEval.mejoras.map((m, i) => <li key={i}>{m}</li>)}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
                   </React.Fragment>
                 );
               })}
@@ -1431,7 +1589,7 @@ export default function App() {
       `}</style>
 
       {/* CABECERA PRINCIPAL REESTRUCTURADA */}
-      <header className={`bg-white border-b-4 shadow-md no-print sticky top-0 z-50 ${activeTab.includes('refuerzo') ? 'border-emerald-600' : 'border-blue-800'}`}>
+      <header className={`bg-white border-b-4 shadow-md no-print sticky top-0 z-50 transition-colors duration-300 ${activeTab.includes('refuerzo') ? 'border-emerald-600' : 'border-blue-800'}`}>
         <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <img src="/banner.png" alt="Logos ARALECTO" className="h-14 sm:h-16 w-auto object-contain" onError={(e) => { e.target.style.display = 'none'; }} />
@@ -1501,7 +1659,7 @@ export default function App() {
               </div>
             </div>
 
-            {renderEvaluationItems(itemsListLectura, SECTION_TITLES_LECTURA, rubricDataLectura, evaluationsLectura, updateEvalLectura, 'blue')}
+            {renderEvaluationItemsLectura()}
           </div>
         )}
 
@@ -1588,7 +1746,7 @@ export default function App() {
               </div>
             </div>
 
-            {renderDashboardTable(itemsListLectura, SECTION_TITLES_LECTURA, evaluationsLectura, RUBRIC_DESCRIPTIONS_LECTURA, 'blue', SCORE_LABELS_LECTURA)}
+            {renderDashboardTableLectura()}
           </div>
         )}
 
@@ -1613,7 +1771,7 @@ export default function App() {
               </div>
             </div>
 
-            {renderEvaluationItems(itemsListRefuerzo, SECTION_TITLES_REFUERZO, rubricDataRefuerzo, evaluationsRefuerzo, updateEvalRefuerzo, 'emerald')}
+            {renderEvaluationItemsRefuerzo()}
           </div>
         )}
 
@@ -1679,7 +1837,7 @@ export default function App() {
                 </p>
               </div>
             </div>
-            
+
             {/* Gráfico y Tabla Refuerzo */}
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 break-inside-avoid mb-8">
               <h3 className="text-lg font-bold text-gray-800 mb-6 text-center">Visión General: Plan de Refuerzo</h3>
@@ -1700,7 +1858,7 @@ export default function App() {
               </div>
             </div>
 
-            {renderDashboardTable(itemsListRefuerzo, SECTION_TITLES_REFUERZO, evaluationsRefuerzo, RUBRIC_DESCRIPTIONS_REFUERZO, 'emerald', SCORE_LABELS_REFUERZO)}
+            {renderDashboardTableRefuerzo()}
           </div>
         )}
 
